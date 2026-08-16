@@ -1,0 +1,7 @@
+split,y,transactions
+testing,0,133782
+testing,1,132
+training,0,270855
+training,1,407
+validation,0,137997
+validation,1,125
