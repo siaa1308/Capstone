@@ -1,7 +1,7 @@
 column,dataset/file,detection_reason,evidence,status,action,removed_from_model_inputs,manual_review_required
 From_End_Balance,prepared_data/transactions_master.csv.gz,post-transaction balance unavailable before transaction completion,column name/schema inspection,post_transaction,removed from model inputs,True,False
 To_End_Balance,prepared_data/transactions_master.csv.gz,post-transaction balance unavailable before transaction completion,column name/schema inspection,post_transaction,removed from model inputs,True,False
-transaction_type_raw,prepared_data/transactions_master.csv.gz,raw category contains Money Laundering,column name/schema inspection,confirmed_leakage,replaced by transaction_type_model_safe,True,False
+transaction_type_raw,prepared_data/transactions_master.csv.gz,raw category contains Money Laundering,column name/schema inspection,confirmed_leakage,removed from model inputs; no redacted replacement is retained,True,False
 laundering_type,prepared_data/transactions_master.csv.gz,confirmed leakage column; name contains target-revealing term,column name/schema inspection,confirmed_leakage,removed from model inputs; y kept only in ground_truth,True,False
 y,prepared_data/transactions_master.csv.gz,confirmed leakage column,column name/schema inspection,confirmed_leakage,removed from model inputs; y kept only in ground_truth,True,False
 Is_Cheque_Fraud,prepared_data/transactions_master.csv.gz,confirmed leakage column; name contains target-revealing term,column name/schema inspection,confirmed_leakage,removed from model inputs; y kept only in ground_truth,True,False

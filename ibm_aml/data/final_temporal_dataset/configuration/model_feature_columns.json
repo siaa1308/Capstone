@@ -5,8 +5,7 @@
     "currency",
     "Amount_Received",
     "Receiving_Currency",
-    "payment_format",
-    "transaction_type_model_safe"
+    "payment_format"
   ],
   "graph_node_safe_features": [
     "node_id",
@@ -53,7 +52,8 @@
     "transaction_type_raw",
     "From_End_Balance",
     "To_End_Balance",
-    "Controlled_by_Criminal"
+    "Controlled_by_Criminal",
+    "transaction_type_model_safe"
   ],
   "non_feature_columns": [
     "split",

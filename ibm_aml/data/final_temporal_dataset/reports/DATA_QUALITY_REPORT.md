@@ -2,7 +2,7 @@
 
 | status | count |
 |---|---:|
-| PASS | 2269 |
+| PASS | 2209 |
 | WARNING | 90 |
 
 ## Counts by Split and Bank
