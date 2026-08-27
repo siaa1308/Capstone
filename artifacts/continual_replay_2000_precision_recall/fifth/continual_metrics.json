@@ -1,0 +1,23 @@
+[
+  {
+    "bank": "Fifth_Third_Bancorp",
+    "june_events": 18234,
+    "july_events": 16531,
+    "replay_events": 2000,
+    "june_before_july": {
+      "pr_auc": 0.3248934682088222,
+      "roc_auc": 0.9856866690473574,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "june_after_july": {
+      "pr_auc": 0.34810003984719295,
+      "roc_auc": 0.991285298318866,
+      "precision": 0.5555555555555556,
+      "recall": 0.3125,
+      "f1": 0.4
+    },
+    "forgetting": -0.023206571638370754
+  }
+]

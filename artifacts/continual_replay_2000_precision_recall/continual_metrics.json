@@ -1,0 +1,107 @@
+[
+  {
+    "bank": "JPMorgan_Chase",
+    "june_events": 66497,
+    "july_events": 59926,
+    "replay_events": 2000,
+    "june_before_july": {
+      "pr_auc": 0.5527575410816149,
+      "roc_auc": 0.9878784886782517,
+      "precision": 0.0427807486631016,
+      "recall": 0.75,
+      "f1": 0.08094435075885328
+    },
+    "june_after_july": {
+      "pr_auc": 0.6360290369820397,
+      "roc_auc": 0.9897591777627323,
+      "precision": 0.19166666666666668,
+      "recall": 0.71875,
+      "f1": 0.3026315789473684
+    },
+    "forgetting": -0.08327149590042482
+  },
+  {
+    "bank": "Wells_Fargo",
+    "june_events": 26534,
+    "july_events": 23812,
+    "replay_events": 2000,
+    "june_before_july": {
+      "pr_auc": 0.6487729040539703,
+      "roc_auc": 0.9904344091987977,
+      "precision": 0.28421052631578947,
+      "recall": 0.7297297297297297,
+      "f1": 0.4090909090909091
+    },
+    "june_after_july": {
+      "pr_auc": 0.785106904312931,
+      "roc_auc": 0.995602765840906,
+      "precision": 0.3368421052631579,
+      "recall": 0.8648648648648649,
+      "f1": 0.48484848484848486
+    },
+    "forgetting": -0.1363340002589607
+  },
+  {
+    "bank": "Citi",
+    "june_events": 19630,
+    "july_events": 17686,
+    "replay_events": 2000,
+    "june_before_july": {
+      "pr_auc": 0.5219293346372972,
+      "roc_auc": 0.9737821644273141,
+      "precision": 0.9230769230769231,
+      "recall": 0.35294117647058826,
+      "f1": 0.5106382978723404
+    },
+    "june_after_july": {
+      "pr_auc": 0.20382626486135852,
+      "roc_auc": 0.9844716208589989,
+      "precision": 0.13793103448275862,
+      "recall": 0.23529411764705882,
+      "f1": 0.17391304347826086
+    },
+    "forgetting": 0.31810306977593866
+  },
+  {
+    "bank": "Fifth_Third_Bancorp",
+    "june_events": 18234,
+    "july_events": 16531,
+    "replay_events": 2000,
+    "june_before_july": {
+      "pr_auc": 0.3248934682088222,
+      "roc_auc": 0.9856866690473574,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "june_after_july": {
+      "pr_auc": 0.34810003984719295,
+      "roc_auc": 0.9912852983188661,
+      "precision": 0.5555555555555556,
+      "recall": 0.3125,
+      "f1": 0.4
+    },
+    "forgetting": -0.023206571638370754
+  },
+  {
+    "bank": "Key_Bank",
+    "june_events": 11767,
+    "july_events": 10645,
+    "replay_events": 2000,
+    "june_before_july": {
+      "pr_auc": 0.26332859782681767,
+      "roc_auc": 0.9348502942932696,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "june_after_july": {
+      "pr_auc": 0.31639181347142126,
+      "roc_auc": 0.9676102921219359,
+      "precision": 0.6666666666666666,
+      "recall": 0.09090909090909091,
+      "f1": 0.16
+    },
+    "forgetting": -0.05306321564460359
+  }
+]

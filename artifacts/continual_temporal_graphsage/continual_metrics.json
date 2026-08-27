@@ -1,0 +1,47 @@
+[
+  {
+    "bank": "JPMorgan_Chase",
+    "june_events": 66497,
+    "july_events": 59926,
+    "replay_events": 2000,
+    "june_pr_auc_before_july": 0.5527575410816149,
+    "june_pr_auc_after_july": 0.6360290369820397,
+    "forgetting": -0.08327149590042482
+  },
+  {
+    "bank": "Wells_Fargo",
+    "june_events": 26534,
+    "july_events": 23812,
+    "replay_events": 2000,
+    "june_pr_auc_before_july": 0.6487729040539703,
+    "june_pr_auc_after_july": 0.7851069043129314,
+    "forgetting": -0.13633400025896114
+  },
+  {
+    "bank": "Citi",
+    "june_events": 19630,
+    "july_events": 17686,
+    "replay_events": 2000,
+    "june_pr_auc_before_july": 0.5219293346372972,
+    "june_pr_auc_after_july": 0.20382626486135852,
+    "forgetting": 0.31810306977593866
+  },
+  {
+    "bank": "Fifth_Third_Bancorp",
+    "june_events": 18234,
+    "july_events": 16531,
+    "replay_events": 2000,
+    "june_pr_auc_before_july": 0.3248934682088222,
+    "june_pr_auc_after_july": 0.34810003984719295,
+    "forgetting": -0.023206571638370754
+  },
+  {
+    "bank": "Key_Bank",
+    "june_events": 11767,
+    "july_events": 10645,
+    "replay_events": 2000,
+    "june_pr_auc_before_july": 0.26332859782681767,
+    "june_pr_auc_after_july": 0.31639181347142126,
+    "forgetting": -0.05306321564460359
+  }
+]

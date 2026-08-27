@@ -1,0 +1,23 @@
+[
+  {
+    "bank": "JPMorgan_Chase",
+    "june_events": 66497,
+    "july_events": 59926,
+    "replay_events": 2000,
+    "june_before_july": {
+      "pr_auc": 0.5527575410816149,
+      "roc_auc": 0.9878784886782517,
+      "precision": 0.0427807486631016,
+      "recall": 0.75,
+      "f1": 0.08094435075885328
+    },
+    "june_after_july": {
+      "pr_auc": 0.6360290369820397,
+      "roc_auc": 0.9897591777627323,
+      "precision": 0.19166666666666668,
+      "recall": 0.71875,
+      "f1": 0.3026315789473684
+    },
+    "forgetting": -0.08327149590042482
+  }
+]

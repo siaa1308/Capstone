@@ -1,0 +1,84 @@
+{
+  "graph_edge_safe_features": [
+    "timestamp",
+    "amount",
+    "currency",
+    "Amount_Received",
+    "Receiving_Currency",
+    "payment_format"
+  ],
+  "graph_node_safe_features": [
+    "node_id",
+    "Account_Country",
+    "Account_Currency",
+    "Entity_Type",
+    "Does_Account_Have_Debit_Card",
+    "DebitCard_Index_in_EntityCards",
+    "MCC",
+    "Account_Type",
+    "Max_Overdraft",
+    "account_kind",
+    "hist_sent_count",
+    "hist_sent_amount_sum",
+    "hist_recv_count",
+    "hist_recv_amount_sum",
+    "hist_out_degree",
+    "hist_in_degree"
+  ],
+  "identifier_columns": [
+    "txn_id",
+    "timestamp",
+    "Transaction_Date",
+    "Transaction_Time",
+    "src_id",
+    "dst_id",
+    "src_bank_id",
+    "dst_bank_id"
+  ],
+  "label_columns": [
+    "txn_id",
+    "timestamp",
+    "y"
+  ],
+  "leakage_columns": [
+    "y",
+    "laundering_type",
+    "edge_label",
+    "Is_APP_Fraud",
+    "Is_Cheque_Fraud",
+    "APP_Fraudster_ID",
+    "Cheque_Fraudster_ID",
+    "APP_Fraud_Sequence_Number",
+    "transaction_type_raw",
+    "From_End_Balance",
+    "To_End_Balance",
+    "Controlled_by_Criminal",
+    "transaction_type_model_safe"
+  ],
+  "non_feature_columns": [
+    "split",
+    "account_id",
+    "src_node",
+    "dst_node"
+  ],
+  "tabular_safe_features": [
+    "Transaction_Day_of_Week",
+    "amount",
+    "currency",
+    "Amount_Received",
+    "Receiving_Currency",
+    "payment_format",
+    "From_Initial_Balance",
+    "To_Initial_Balance",
+    "Sufficient_Funds",
+    "Overdraft_Okay",
+    "Is_All_Cash",
+    "Is_Hold",
+    "src_prev_txn_count",
+    "src_prev_amount_sum",
+    "src_prev_amount_mean",
+    "dst_prev_txn_count",
+    "dst_prev_amount_sum",
+    "dst_prev_amount_mean"
+  ]
+}

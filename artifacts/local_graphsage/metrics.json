@@ -1,0 +1,44 @@
+[
+  {
+    "bank": "Citi",
+    "threshold": 1.3384521224863235e-33,
+    "node_feature_columns": [
+      "Account_Country",
+      "Account_Currency",
+      "Entity_Type",
+      "Does_Account_Have_Debit_Card",
+      "DebitCard_Index_in_EntityCards",
+      "MCC",
+      "Account_Type",
+      "Max_Overdraft",
+      "account_kind",
+      "hist_sent_count",
+      "hist_sent_amount_sum",
+      "hist_recv_count",
+      "hist_recv_amount_sum",
+      "hist_out_degree",
+      "hist_in_degree"
+    ],
+    "edge_feature_columns": [
+      "amount",
+      "currency",
+      "Amount_Received",
+      "Receiving_Currency",
+      "payment_format"
+    ],
+    "validation": {
+      "pr_auc": 0.0019244079536910627,
+      "roc_auc": 0.6120395972916446,
+      "precision": 0.0036420395421436005,
+      "recall": 0.7,
+      "f1": 0.007246376811594203
+    },
+    "testing": {
+      "pr_auc": 0.0009894459102902375,
+      "roc_auc": 0.35220644877297236,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    }
+  }
+]

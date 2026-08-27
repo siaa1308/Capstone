@@ -1,0 +1,23 @@
+[
+  {
+    "bank": "Key_Bank",
+    "june_events": 11767,
+    "july_events": 10645,
+    "replay_events": 2000,
+    "june_before_july": {
+      "pr_auc": 0.26332859782681767,
+      "roc_auc": 0.9348502942932696,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "june_after_july": {
+      "pr_auc": 0.31639181347142126,
+      "roc_auc": 0.9676102921219358,
+      "precision": 0.6666666666666666,
+      "recall": 0.09090909090909091,
+      "f1": 0.16
+    },
+    "forgetting": -0.05306321564460359
+  }
+]
