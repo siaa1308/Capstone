@@ -1,0 +1,16 @@
+split,bank,nodes,edges
+training,JPMorgan_Chase,24906,126423
+training,Wells_Fargo,11292,50346
+training,Citi,8742,37316
+training,Fifth_Third_Bancorp,7914,34765
+training,Key_Bank,5314,22412
+validation,JPMorgan_Chase,22600,64487
+validation,Wells_Fargo,10218,25592
+validation,Citi,7825,18836
+validation,Fifth_Third_Bancorp,6989,17789
+validation,Key_Bank,4756,11418
+testing,JPMorgan_Chase,23124,62302
+testing,Wells_Fargo,10460,24964
+testing,Citi,7976,18192
+testing,Fifth_Third_Bancorp,7266,17262
+testing,Key_Bank,4868,11194
