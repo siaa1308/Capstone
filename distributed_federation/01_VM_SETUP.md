@@ -114,35 +114,31 @@ For the first distributed test, use CPU builds on every VM. This avoids CUDA dif
 
 ```bash
 python -m pip install "torch==2.11.*" --index-url https://download.pytorch.org/whl/cpu
-python -m pip install "torch_geometric==2.9.*" numpy pandas scikit-learn safetensors confluent-kafka
+python -m pip install -r distributed_federation/requirements-distributed.txt
 ```
 
-PyG's basic installation no longer requires the optional compiled `torch_scatter` or `torch_sparse` extensions. Do not add them unless the current code proves that it needs them.
+The repository's `CausalTemporalGraphSAGE` is implemented directly with PyTorch.
+It does **not** import or require `torch_geometric`, `torch_scatter`, or
+`torch_sparse`. Do not install or test those packages for this project.
 
 Verify imports and record the final environment on each VM:
 
 ```bash
-python -c "import platform, torch, torch_geometric, numpy, pandas, sklearn; print(platform.machine()); print(torch.__version__); print(torch_geometric.__version__); print(numpy.__version__); print(pandas.__version__); print(sklearn.__version__); print('cuda=', torch.cuda.is_available())"
+python -c "import platform, torch, numpy, pandas, sklearn, safetensors, confluent_kafka; print('architecture:', platform.machine()); print('torch:', torch.__version__); print('numpy:', numpy.__version__); print('pandas:', pandas.__version__); print('sklearn:', sklearn.__version__); print('Dependencies OK'); print('CUDA:', torch.cuda.is_available())"
 python -m pip freeze > environment-lock.txt
 ```
 
 Compare the four `environment-lock.txt` files. The Python package versions must match before the distributed run. `cuda=False` is expected for this CPU-only VM setup.
 
-Run a minimal GraphSAGE operation on each VM:
+Confirm that the repository's actual model entry point loads:
 
 ```bash
-python - <<'PY'
-import torch
-from torch_geometric.nn import SAGEConv
-
-x = torch.tensor([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
-edge_index = torch.tensor([[0, 1, 2, 0], [1, 2, 0, 2]])
-output = SAGEConv(2, 4)(x, edge_index)
-assert output.shape == (3, 4)
-assert torch.isfinite(output).all()
-print("PYTORCH_PYG_SMOKE_TEST_OK")
-PY
+python src/gnn/causal_temporal_graphsage.py --help
 ```
+
+Do not start a separate training run here. The distributed deep preflight in
+`README.md` will load the dataset, fit the encoders, and instantiate the real
+model after ZeroTier, Kafka, and `config.json` are ready.
 
 ## 6. Basic VM validation
 
@@ -162,7 +158,8 @@ Expected architecture:
 - Windows Intel/AMD VM: `x86_64`
 - Apple Silicon VM: `aarch64`
 
-Create a VM snapshot named `ubuntu-base-ready` after updates succeed and before installing Kafka or ML dependencies.
+Create a VM snapshot named `ubuntu-python-ready` after the dependency and basic
+validation checks succeed, before installing Kafka on the central VM.
 
 ## 7. Completion checklist
 
@@ -172,6 +169,8 @@ Create a VM snapshot named `ubuntu-base-ready` after updates succeed and before 
 - [ ] Git and Python are installed.
 - [ ] The repository is cloned separately on every VM.
 - [ ] No `.venv` or compiled model environment was copied across architectures.
+- [ ] The dependency verification prints `Dependencies OK`.
+- [ ] The model `--help` command succeeds without importing `torch_geometric`.
 - [ ] A clean VM snapshot exists.
 
 ## Official references
@@ -182,4 +181,3 @@ Create a VM snapshot named `ubuntu-base-ready` after updates succeed and before 
 - [Ubuntu Server installation](https://documentation.ubuntu.com/server/how-to/installation/)
 - [Ubuntu Server for ARM](https://ubuntu.com/download/server/arm)
 - [PyTorch installation](https://pytorch.org/get-started/locally/)
-- [PyTorch Geometric installation](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html)
