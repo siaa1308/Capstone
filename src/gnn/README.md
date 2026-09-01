@@ -51,3 +51,27 @@ Run simulated five-client FedAvg with a shared training-only feature schema:
 ```bash
 python3 src/gnn/federated_causal_temporal_graphsage.py --rounds 3 --local-epochs 1
 ```
+
+## Federated Continual Temporal GraphSAGE
+
+`federated_continual_temporal_graphsage.py` combines the two experiments above.
+Each bank receives the current global temporal GNN, trains it on its next
+chronological local window plus a replay buffer sampled solely from earlier local
+windows, and returns only updated model weights for data-size-weighted FedAvg.
+Raw transactions, labels, and replay examples never leave their local client.
+
+The default 31-day task window divides the June--July training span into two
+federated continual-learning rounds:
+
+```bash
+python3 src/gnn/federated_continual_temporal_graphsage.py --task-days 31 --replay-size 2000 --local-epochs 2 --fed-rounds-per-task 3
+```
+
+The output includes each client's current-task size, positive count, replay size,
+and FedAvg aggregation weight for every round. Validation chooses thresholds only
+after final aggregation; testing remains untouched until the final report.
+
+`--fed-rounds-per-task` is intentionally separate from chronological tasks: it
+allows the global model to converge on a task before the next task arrives. With
+the supplied June--July training span, the command above runs three FedAvg rounds
+on June followed by three FedAvg rounds on July plus replay.
