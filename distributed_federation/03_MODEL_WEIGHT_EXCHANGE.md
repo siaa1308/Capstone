@@ -97,10 +97,10 @@ Each model message should carry metadata similar to:
   "round_id": 1,
   "client_id": "bank-1",
   "model_name": "CausalTemporalGraphSAGE",
-  "schema_sha256": "<HASH_OF_ORDERED_FEATURE_SCHEMA>",
-  "base_model_sha256": "<HASH_OF_GLOBAL_MODEL_RECEIVED>",
-  "payload_sha256": "<HASH_OF_THIS_PAYLOAD>",
-  "message_hmac_sha256": "<HMAC_OVER_CANONICAL_METADATA_AND_PAYLOAD_HASH>",
+  "schema_sha256": "computed-at-runtime",
+  "base_model_sha256": "computed-at-runtime",
+  "payload_sha256": "computed-at-runtime",
+  "message_hmac_sha256": "computed-at-runtime",
   "training_examples": 126423,
   "local_epochs": 1,
   "chunk_index": 0,
@@ -167,7 +167,7 @@ model.load_state_dict(received_state, strict=True)
 Install planned transport dependencies inside each VM's virtual environment:
 
 ```bash
-python -m pip install confluent-kafka safetensors
+python -m pip install -r distributed_federation/requirements-distributed.txt
 ```
 
 The runnable implementation pins the transport dependencies in
@@ -267,7 +267,7 @@ The current repository's federated simulation weights each bank by its number of
 1. Pull the same Git commit.
 2. Activate the VM-local virtual environment.
 3. Confirm the assigned bank partition and client ID.
-4. Confirm the Kafka broker is `<CENTRAL_ZT_IP>:9092`.
+4. Confirm the Kafka broker is `10.170.231.39:9092`.
 5. Start the bank worker before the central operator begins the round.
 6. Never substitute another bank's dataset or reuse an old update.
 
@@ -341,4 +341,7 @@ distributed_federation/
     └── preflight.py
 ```
 
-Do not commit a real `.env`, ZeroTier credentials, private keys, or machine-specific addresses.
+Do not commit a real `.env`, ZeroTier credentials, HMAC secrets, SSH passwords,
+or private keys. The classroom network ID and stable central managed IP are
+documented in `02_ZEROTIER_KAFKA_SETUP.md`; they are routing identifiers, not
+authentication secrets.

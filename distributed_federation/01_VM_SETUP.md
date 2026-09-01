@@ -101,7 +101,7 @@ sudo reboot
 Run on each VM after cloning the repository:
 
 ```bash
-git clone <REPOSITORY_URL> ~/Capstone
+git clone --branch Anshul-feat/modelSharing https://github.com/siaa1308/Capstone.git ~/Capstone
 cd ~/Capstone
 python3 -m venv .venv
 source .venv/bin/activate
@@ -129,6 +129,11 @@ python -m pip freeze > environment-lock.txt
 ```
 
 Compare the four `environment-lock.txt` files. The Python package versions must match before the distributed run. `cuda=False` is expected for this CPU-only VM setup.
+
+If an older copy of this guide tells you to install `torch_geometric==2.9.*`,
+stop and pull the current branch. That obsolete command fails on the tested
+Python package index and prevents NumPy and the remaining packages in the same
+command from being installed.
 
 Confirm that the repository's actual model entry point loads:
 
@@ -172,6 +177,10 @@ validation checks succeed, before installing Kafka on the central VM.
 - [ ] The dependency verification prints `Dependencies OK`.
 - [ ] The model `--help` command succeeds without importing `torch_geometric`.
 - [ ] A clean VM snapshot exists.
+
+After this checklist passes, continue with `02_ZEROTIER_KAFKA_SETUP.md`. SSH is
+optional; it is only a convenience for remote administration and is not used by
+Kafka or the federated-learning protocol.
 
 ## Official references
 

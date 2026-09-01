@@ -8,6 +8,22 @@ Bank VMs -- ZeroTier private network --> Central VM:9092 --> Kafka
 
 The first test uses one Kafka broker because this is a four-computer capstone simulation, not a production Kafka cluster. Kafka is a transport and coordination layer; it is not the federated aggregator itself.
 
+## Confirmed classroom values
+
+| Setting | Value |
+|---|---|
+| ZeroTier network | `capstonePhase3` |
+| Network ID | `166359304edeba91` |
+| Central member | `CentralServer(Broker)` |
+| Central ZeroTier IP | `10.170.231.39` |
+| Central ZeroTier interface | `ztyewypcw7` |
+| Confirmed bank member | `KeyBank` (`10.170.231.168`) |
+| Kafka broker | `10.170.231.39:9092` |
+
+The 16-character network ID is used to join the network and is not a password.
+Never commit a ZeroTier API token, account credential, SSH password, or HMAC
+secret.
+
 ## Relationship to the earlier Kafka prototype
 
 The earlier [`AnshulBanda/Capstone`](https://github.com/AnshulBanda/Capstone) repository is accessible and contains a useful proof of concept:
@@ -27,15 +43,14 @@ The producer loop, JSON serialization idea, topic testing sequence, and manual v
 
 The new setup therefore preserves the tested Kafka concept while replacing the address, security boundary, broker configuration, topics, and message format.
 
-## 1. Create the private ZeroTier network
+## 1. Use the private ZeroTier network
 
-One team member should:
+The network owner should:
 
-1. Sign in to ZeroTier Central.
-2. Create a private network.
-3. Copy its 16-character network ID.
-4. Keep automatic IPv4 assignment enabled.
-5. Never commit the ZeroTier account token or API token to Git.
+1. Sign in to ZeroTier Central and open `capstonePhase3`.
+2. Confirm the network ID is `166359304edeba91`.
+3. Keep automatic IPv4 assignment enabled.
+4. Authorize only the four known VM node IDs.
 
 Use this naming convention when authorizing members:
 
@@ -53,13 +68,13 @@ Review the installer at `https://install.zerotier.com` before running it, then i
 ```bash
 curl -sSf https://install.zerotier.com | sudo bash
 sudo systemctl enable --now zerotier-one
-sudo zerotier-cli status
+sudo zerotier-cli info
 ```
 
-Join the network, replacing the placeholder:
+Join the confirmed team network:
 
 ```bash
-sudo zerotier-cli join <ZEROTIER_NETWORK_ID>
+sudo zerotier-cli join 166359304edeba91
 ```
 
 The network owner must authorize each of the four nodes in ZeroTier Central. Then verify:
@@ -73,21 +88,22 @@ Record the managed ZeroTier addresses in a private team note:
 
 | Role | Hostname | ZeroTier IP |
 |---|---|---|
-| Central | `fcl-central` | `<CENTRAL_ZT_IP>` |
-| Bank 1 | `fcl-bank-1` | `<BANK_1_ZT_IP>` |
-| Bank 2 | `fcl-bank-2` | `<BANK_2_ZT_IP>` |
-| Bank 3 | `fcl-bank-3` | `<BANK_3_ZT_IP>` |
+| Central | `CentralServer(Broker)` | `10.170.231.39` |
+| Bank 1 | `KeyBank` | `10.170.231.168` |
+| Bank 2 | Assign after authorization | Record after authorization |
+| Bank 3 | Assign after authorization | Record after authorization |
 
 Test from every bank VM:
 
 ```bash
-ping -c 3 <CENTRAL_ZT_IP>
+ping -c 3 10.170.231.39
 ```
 
-Test SSH only after the address has been checked carefully:
+SSH is optional; Kafka and model transfer do not use it. If remote
+administration is wanted, test SSH only after confirming the username and IP:
 
 ```bash
-ssh <CENTRAL_USERNAME>@<CENTRAL_ZT_IP>
+ssh anshul-banda@10.170.231.39
 ```
 
 ## 3. Restrict the Ubuntu firewall to ZeroTier
@@ -99,13 +115,21 @@ sudo zerotier-cli listnetworks
 ip -brief link
 ```
 
-Replace `<ZT_INTERFACE>` below with the exact interface name. On the central VM:
+On the confirmed central VM, verify that `10.170.231.39` maps to
+`ztyewypcw7`:
+
+```bash
+ip -o -4 addr show | awk '$4 ~ /^10\.170\.231\.39\// {print $2}'
+```
+
+Then run on the central VM:
 
 ```bash
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
-sudo ufw allow in on <ZT_INTERFACE> to any port 22 proto tcp
-sudo ufw allow in on <ZT_INTERFACE> to any port 9092 proto tcp
+sudo ufw allow 9993/udp
+sudo ufw allow in on ztyewypcw7 to any port 22 proto tcp
+sudo ufw allow in on ztyewypcw7 to any port 9092 proto tcp
 sudo ufw enable
 sudo ufw status verbose
 ```
@@ -115,9 +139,14 @@ On each bank VM, port 9092 does not need to be opened because banks initiate the
 ```bash
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
-sudo ufw allow in on <ZT_INTERFACE> to any port 22 proto tcp
+sudo ufw allow 9993/udp
 sudo ufw enable
+sudo ufw status verbose
 ```
+
+On a bank VM, inbound port 22 is optional. If SSH is wanted, use the exact
+interface shown in that VM's `dev` column. Bank VMs must not open inbound port
+9092 because they initiate outbound connections to the central broker.
 
 Do not expose Kafka through the host router or public internet.
 
@@ -174,10 +203,10 @@ mkdir -p ~/fcl-kafka
 cd ~/fcl-kafka
 ```
 
-Create a local `.env` file, replacing the placeholder with the central VM's exact managed ZeroTier IPv4 address:
+Create a local `.env` file with the confirmed central ZeroTier IPv4 address:
 
 ```bash
-printf 'CENTRAL_ZT_IP=%s\n' '<CENTRAL_ZT_IP>' > .env
+printf 'CENTRAL_ZT_IP=%s\n' '10.170.231.39' > .env
 chmod 600 .env
 ```
 
@@ -217,7 +246,12 @@ This first broker intentionally uses ephemeral container storage, matching Apach
 Start and inspect Kafka:
 
 ```bash
-grep -Eq '^CENTRAL_ZT_IP=([0-9]{1,3}\.){3}[0-9]{1,3}$' .env || { echo "Invalid CENTRAL_ZT_IP in .env"; exit 1; }
+if grep -Eq '^CENTRAL_ZT_IP=([0-9]{1,3}\.){3}[0-9]{1,3}$' .env; then
+  echo "CENTRAL_ZT_IP is valid"
+else
+  echo "Invalid CENTRAL_ZT_IP in .env; fix it before continuing"
+fi
+cat .env
 sudo docker compose config >/dev/null
 sudo docker compose pull
 sudo docker compose up -d
@@ -265,7 +299,7 @@ sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
 On each bank VM:
 
 ```bash
-nc -vz <CENTRAL_ZT_IP> 9092
+nc -vz 10.170.231.39 9092
 ```
 
 If `nc` is unavailable:
@@ -274,13 +308,16 @@ If `nc` is unavailable:
 sudo apt install -y netcat-openbsd
 ```
 
-Install the Python Kafka client inside the project virtual environment:
+Verify the Python Kafka client installed during VM setup:
 
 ```bash
 cd ~/Capstone
 source .venv/bin/activate
-python -m pip install confluent-kafka
+python -c "import confluent_kafka; print('confluent-kafka is installed')"
 ```
+
+If that reports `ModuleNotFoundError`, install the complete tested dependency
+set with `python -m pip install -r distributed_federation/requirements-distributed.txt`.
 
 Test metadata access:
 
@@ -288,7 +325,7 @@ Test metadata access:
 python - <<'PY'
 from confluent_kafka.admin import AdminClient
 
-broker = "<CENTRAL_ZT_IP>:9092"
+broker = "10.170.231.39:9092"
 metadata = AdminClient({"bootstrap.servers": broker}).list_topics(timeout=10)
 expected = {"fcl.control", "fcl.global-model", "fcl.client-updates", "fcl.metrics"}
 missing = expected - set(metadata.topics)
@@ -312,6 +349,39 @@ The official `apache/kafka:4.3.1` image supports both `linux/amd64` and `linux/a
 For deployment beyond the demonstration, configure Kafka TLS/SASL and certificate-based client authentication.
 
 ## 9. Troubleshooting
+
+### A validation command closes the terminal
+
+An older guide used `... || { echo ...; exit 1; }`. In an interactive shell,
+`exit 1` closes the terminal when `.env` is invalid. Reopen the terminal, run
+`cd ~/fcl-kafka`, write the exact `.env` shown in Step 5, and use the non-exiting
+`if` validation block in this version.
+
+### After reboot, Kafka port 9092 is unavailable
+
+ZeroTier may restore its IP after Docker first tries to bind to it. On the
+central VM, wait until `sudo zerotier-cli listnetworks` shows `OK`, then run:
+
+```bash
+cd ~/fcl-kafka
+sudo docker compose up -d
+sudo docker compose ps
+sudo ss -lntp | grep ':9092'
+```
+
+Then retry `nc -vz 10.170.231.39 9092` from the bank VM.
+
+### Ping reports zero received but `nc` succeeds
+
+The successful TCP test is authoritative for Kafka. ICMP ping can be filtered
+without breaking port 9092. Do not disable UFW when `nc` and the Python metadata
+test both succeed.
+
+### SSH asks for a password
+
+SSH is optional. It expects the remote Ubuntu account password, not a ZeroTier
+or GitHub password. The remote username is the exact, case-sensitive output of
+`whoami`. Password characters are intentionally not displayed while typing.
 
 ### ZeroTier shows `ACCESS_DENIED`
 
@@ -343,16 +413,16 @@ Prefer assigning stable managed IPs to the four members in ZeroTier Central.
 
 ## 10. End-to-end infrastructure gate
 
-Do not begin model-transfer implementation until all checks below pass:
+Do not start a distributed model run until all checks below pass:
 
 | Check | Run on | Required result |
 |---|---|---|
-| `sudo zerotier-cli status` | Every VM | `ONLINE` |
+| `sudo zerotier-cli info` | Every VM | `ONLINE` |
 | `sudo zerotier-cli listnetworks` | Every VM | Network status `OK` and a managed IP |
-| `ping -c 3 <CENTRAL_ZT_IP>` | Every bank | Replies received |
+| `ping -c 3 10.170.231.39` | Every bank | Replies helpful; Kafka port test below is authoritative |
 | `sudo docker compose ps` | Central | Kafka state is running |
 | `kafka-broker-api-versions.sh` command above | Central | Broker information, no timeout |
-| `nc -vz <CENTRAL_ZT_IP> 9092` | Every bank | Connection succeeded |
+| `nc -vz 10.170.231.39 9092` | Every bank | Connection succeeded |
 | Python metadata test above | Every bank | `KAFKA_METADATA_TEST_OK` |
 
 If any check fails, stop at that row. Do not compensate by exposing Kafka on the Wi-Fi address or disabling the firewall globally.
