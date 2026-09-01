@@ -26,12 +26,14 @@ from causal_temporal_graphsage import (
     DEFAULT_OUTPUT,
     CausalTemporalGraphSAGE,
     Events,
+    alert_budget_metrics,
     batches,
     build_bank_data,
     choose_threshold,
+    epoch_sample_mask,
     fit_shared_feature_encoders,
+    masked_loss,
     metric_block,
-    sampled_loss,
     score_stream,
     set_seed,
 )
@@ -53,6 +55,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--negative-ratio", type=int, default=20)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
+    parser.add_argument("--alert-k", default="10,25,50",
+                        help="Comma-separated analyst alert budgets for precision@K and recall@K.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--output-dir", type=Path,
@@ -114,10 +118,14 @@ def local_train(model: CausalTemporalGraphSAGE, static: torch.Tensor, events: Ev
     for _ in range(cfg.local_epochs):
         model.train()
         state = model.initial_state(static)
+        epoch_mask = epoch_sample_mask(events.labels, cfg.negative_ratio, generator)
+        offset = 0
         for batch in batches(events, cfg.batch_size):
             optimizer.zero_grad()
             logits, state = model.score_and_update(state, batch)
-            loss = sampled_loss(logits, batch.labels, cfg.negative_ratio, 1.0, generator)
+            batch_mask = epoch_mask[offset:offset + len(batch)]
+            offset += len(batch)
+            loss = masked_loss(logits, batch.labels, batch_mask)
             if loss is not None:
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
@@ -130,7 +138,7 @@ def fedavg(states: list[dict[str, torch.Tensor]], weights: list[int]) -> dict[st
     return {name: sum(state[name].float() * (weight / total) for state, weight in zip(states, weights)) for name in states[0]}
 
 
-def evaluate_global(model: CausalTemporalGraphSAGE, clients: dict[str, tuple[torch.Tensor, dict[str, Events]]], batch_size: int) -> list[dict[str, object]]:
+def evaluate_global(model: CausalTemporalGraphSAGE, clients: dict[str, tuple[torch.Tensor, dict[str, Events]]], batch_size: int, alert_budgets: list[int]) -> list[dict[str, object]]:
     results = []
     for bank, (static, streams) in clients.items():
         state = model.initial_state(static)
@@ -143,6 +151,8 @@ def evaluate_global(model: CausalTemporalGraphSAGE, clients: dict[str, tuple[tor
             "threshold": threshold,
             "validation": metric_block(validation_labels, validation_probs, threshold),
             "testing": metric_block(testing_labels, testing_probs, threshold),
+            "validation_alert_metrics": alert_budget_metrics(validation_labels, validation_probs, alert_budgets),
+            "testing_alert_metrics": alert_budget_metrics(testing_labels, testing_probs, alert_budgets),
         })
     return results
 
@@ -224,7 +234,10 @@ def main() -> None:
             current, _replay = task_inputs[bank]
             histories[bank] = current if histories[bank] is None else concat_chronological(histories[bank], current)
 
-    results = evaluate_global(global_model, clients, cfg.batch_size)
+    alert_budgets = [int(value) for value in cfg.alert_k.split(",") if value.strip()]
+    if not alert_budgets or any(value < 1 for value in alert_budgets):
+        raise ValueError("--alert-k must contain positive integers")
+    results = evaluate_global(global_model, clients, cfg.batch_size, alert_budgets)
     cfg.output_dir.mkdir(parents=True, exist_ok=True)
     torch.save({"state_dict": global_model.state_dict(), "args": vars(cfg)}, cfg.output_dir / "global_model.pt")
     (cfg.output_dir / "metrics.json").write_text(json.dumps({

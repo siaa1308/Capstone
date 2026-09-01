@@ -38,8 +38,6 @@ BUILD_SCRIPT = Path("scripts/build_final_temporal_dataset.py")
 BANKS = [
     "JPMorgan_Chase",
     "Wells_Fargo",
-    "Citi",
-    "Fifth_Third_Bancorp",
     "Key_Bank",
 ]
 SPLITS = ["training", "validation", "testing"]

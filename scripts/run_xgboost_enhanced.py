@@ -32,7 +32,7 @@ from xgboost import XGBClassifier
 DATASET_DIR = Path("final_temporal_dataset")
 FEATURE_JSON = DATASET_DIR / "configuration" / "model_feature_columns.json"
 PREPROCESS_SCRIPT = Path("scripts/preprocess_ibm_amlsim_style.py")
-BANKS = ["JPMorgan_Chase", "Wells_Fargo", "Citi", "Fifth_Third_Bancorp", "Key_Bank"]
+BANKS = ["JPMorgan_Chase", "Wells_Fargo", "Key_Bank"]
 SPLITS = ["training", "validation", "testing"]
 TUNED_REFERENCE = {
     "validation_pr_auc": 0.739482,

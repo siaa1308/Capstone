@@ -1,5 +1,9 @@
 # Project Context — Federated Continual Learning for Privacy-Preserving AML
 
+> Current optimized three-bank results and protocol caveats are in
+> `docs/OPTIMIZATION_REPORT.md`; non-IID evidence is in
+> `artifacts/optimized_fedavg/diagnostics/NON_IID_AUDIT.md`.
+
 You are working on my B.Tech CSE/AI-ML capstone project.
 
 ## 1. Project Title
@@ -367,6 +371,13 @@ Only model parameters/updates should be exchanged.
 We do not have actual private datasets from multiple banks.
 
 Therefore, the federated setup will simulate banks by partitioning the IBM dataset.
+
+The active experimental cohort contains three simulated clients: JPMorgan Chase,
+Wells Fargo, and Key Bank. Citi and Fifth Third Bancorp remain in the processed
+dataset and historical artifacts but are excluded from new model runs based on
+their weaker development PR-AUC. This selection must be disclosed as a
+development-stage cohort decision rather than presented as a test-independent
+scientific result.
 
 Possible strategies:
 

@@ -33,8 +33,6 @@ FEATURE_JSON = DATASET_DIR / "configuration" / "model_feature_columns.json"
 BANKS = [
     "JPMorgan_Chase",
     "Wells_Fargo",
-    "Citi",
-    "Fifth_Third_Bancorp",
     "Key_Bank",
 ]
 SPLITS = ["training", "validation", "testing"]
