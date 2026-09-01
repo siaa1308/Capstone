@@ -1,0 +1,43 @@
+{
+  "broker": "CENTRAL_ZT_IP:9092",
+  "run_id": "demo-001",
+  "clients": [
+    {
+      "client_id": "bank-1",
+      "bank": "JPMorgan_Chase"
+    },
+    {
+      "client_id": "bank-2",
+      "bank": "Wells_Fargo"
+    },
+    {
+      "client_id": "bank-3",
+      "bank": "Citi"
+    }
+  ],
+  "schema_banks": [
+    "JPMorgan_Chase",
+    "Wells_Fargo",
+    "Citi",
+    "Fifth_Third_Bancorp",
+    "Key_Bank"
+  ],
+  "dataset_dir": "data/final_temporal_dataset",
+  "output_dir": "artifacts/distributed_federation",
+  "initial_checkpoint": null,
+  "rounds": 3,
+  "hidden_channels": 64,
+  "dropout": 0.25,
+  "local_epochs": 1,
+  "batch_size": 512,
+  "negative_ratio": 20,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "seed": 42,
+  "round_timeout_seconds": 900,
+  "max_chunk_bytes": 524288,
+  "topics": {
+    "global_model": "fcl.global-model",
+    "client_updates": "fcl.client-updates"
+  }
+}
