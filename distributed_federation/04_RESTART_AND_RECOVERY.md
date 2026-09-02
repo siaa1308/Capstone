@@ -1,8 +1,11 @@
 # Restart and Recovery Runbook
 
+> First-time setup now starts in [`QUICKSTART.md`](QUICKSTART.md). This page is for recovery after that setup has already worked.
+
 Use this checklist after a VM reboot, Docker/Kafka restart, terminal closure, or
-failed federation attempt. Commands assume the repository is `~/Capstone`, Kafka
-is in `~/fcl-kafka`, and the central ZeroTier IP is `10.170.231.39`.
+failed federation attempt. Commands assume the repository is `~/Capstone`, the
+tracked Kafka setup is under `distributed_federation/kafka`, and the central
+ZeroTier IP is `10.170.231.39`.
 
 ## Important retry rule
 
@@ -37,14 +40,9 @@ Required result: ZeroTier reports `ONLINE`, network `166359304edeba91` reports
 network owner must authorize that node. Do not repeatedly leave and rejoin the
 network, because that can create a new node identity requiring authorization.
 
-On each bank VM, test the service port after Kafka has started:
-
-```bash
-nc -vz 10.170.231.39 9092
-```
-
-Ping is optional. If `nc` and Kafka metadata succeed, filtered ICMP is not a
-pipeline problem.
+After Kafka starts, use the client preflight in Step 6. It checks the actual
+Kafka TCP connection and broker metadata, so a separate `nc` test is unnecessary.
+Ping is optional; filtered ICMP is not a pipeline problem when preflight passes.
 
 ## 3. Restore Docker and Kafka on the central VM
 
@@ -54,7 +52,7 @@ port 9092 specifically to `10.170.231.39`:
 ```bash
 ip -o -4 addr show | grep '10.170.231.39/'
 sudo systemctl enable --now docker
-cd ~/fcl-kafka
+cd ~/Capstone/distributed_federation/kafka
 grep '^CENTRAL_ZT_IP=10.170.231.39$' .env
 sudo docker compose up -d
 sudo docker compose ps
@@ -69,8 +67,8 @@ sudo docker exec fcl-kafka /opt/kafka/bin/kafka-broker-api-versions.sh \
   --bootstrap-server fcl-kafka:19092
 ```
 
-The broker uses ephemeral container storage. If the container was recreated,
-recreate the two required topics safely:
+The broker now uses a named Docker volume, and the `kafka-init` service creates
+the two topics automatically. If either topic is missing, recreate it safely:
 
 ```bash
 sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
@@ -220,9 +218,9 @@ artifacts/distributed_federation/<run_id>/
 | Symptom | Check |
 |---|---|
 | ZeroTier `ACCESS_DENIED` | Authorize the exact VM node in ZeroTier Central. |
-| `nc` fails | Check ZeroTier status, Kafka container, port binding, and central UFW rule. |
-| Ping fails but `nc` succeeds | Continue; TCP 9092 is the authoritative network check. |
-| Broker metadata timeout | Check advertised listener and `CENTRAL_ZT_IP` in `~/fcl-kafka/.env`. |
+| Client preflight cannot reach Kafka | Check ZeroTier status, Kafka container, port binding, and central UFW rule. |
+| Ping fails but client preflight succeeds | Continue; the real Kafka connection is authoritative. |
+| Broker metadata timeout | Check advertised listener and `CENTRAL_ZT_IP` in `~/Capstone/distributed_federation/kafka/.env`. |
 | Missing Kafka topics | Run the idempotent topic-creation commands in Step 3. |
 | Missing/short secret | Reload the correct environment variables in the current terminal. |
 | Worker waits forever | Confirm identical `run_id`, topic names, broker, schema settings, and Git commit. |
@@ -237,7 +235,7 @@ Stop the Python processes with `Ctrl+C` if they are still open. Kafka can remain
 running. To stop it without deleting its current container:
 
 ```bash
-cd ~/fcl-kafka
+cd ~/Capstone/distributed_federation/kafka
 sudo docker compose stop
 ```
 

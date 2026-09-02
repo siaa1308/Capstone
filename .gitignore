@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.venv/
+environment-lock.txt
+distributed_federation/.env
+distributed_federation/config.json
+distributed_federation/kafka/.env

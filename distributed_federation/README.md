@@ -1,5 +1,7 @@
 # Plug-and-play model-weight federation
 
+> **Start with [`QUICKSTART.md`](QUICKSTART.md).** It is the short, checklist-driven setup and uses the automated preflight instead of `nc`. The numbered documents remain detailed reference material.
+
 This folder runs the repository's existing `CausalTemporalGraphSAGE` model across one central VM and three bank VMs. Raw rows stay inside each worker process; Kafka carries only signed, chunked `safetensors` model states and small metadata records.
 
 Confirmed infrastructure for the classroom run:
@@ -122,7 +124,7 @@ If the central VM was rebooted, first confirm ZeroTier shows `OK`, then restore
 the broker before running preflight:
 
 ```bash
-cd ~/fcl-kafka
+cd ~/Capstone/distributed_federation/kafka
 sudo docker compose up -d
 sudo docker compose ps
 ```

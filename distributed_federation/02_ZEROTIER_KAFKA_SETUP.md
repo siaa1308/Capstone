@@ -1,5 +1,7 @@
 # ZeroTier Network and Kafka Broker Setup
 
+> For the current simplified workflow, begin with [`QUICKSTART.md`](QUICKSTART.md). The Kafka Compose configuration is now tracked under `distributed_federation/kafka/`, topics are created automatically, and Python preflight replaces manual `nc` testing. This page is retained as detailed background and troubleshooting reference.
+
 This guide connects all Ubuntu VMs through one private ZeroTier network and runs one Kafka broker on the central VM.
 
 ```text
@@ -198,52 +200,18 @@ sudo zerotier-cli listnetworks
 ip -brief address
 ```
 
-Then create the Kafka directory:
+The Compose configuration is tracked in the repository; do not retype it. From
+the repository root:
 
 ```bash
-mkdir -p ~/fcl-kafka
-cd ~/fcl-kafka
-```
-
-Create a local `.env` file with the confirmed central ZeroTier IPv4 address:
-
-```bash
-printf 'CENTRAL_ZT_IP=%s\n' '10.170.231.39' > .env
+cd distributed_federation/kafka
+test -f .env || cp .env.example .env
 chmod 600 .env
 ```
 
-Do not commit this `.env` file. Create `compose.yaml` with the following content:
-
-```yaml
-services:
-  kafka:
-    image: apache/kafka:4.3.1
-    container_name: fcl-kafka
-    hostname: fcl-kafka
-    restart: unless-stopped
-    ports:
-      - "${CENTRAL_ZT_IP}:9092:9092"
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: "broker,controller"
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@fcl-kafka:9093"
-      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
-      KAFKA_LISTENERS: "INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
-      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://fcl-kafka:19092,EXTERNAL://${CENTRAL_ZT_IP}:9092"
-      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
-      KAFKA_MESSAGE_MAX_BYTES: 2097152
-      KAFKA_REPLICA_FETCH_MAX_BYTES: 2097152
-      KAFKA_LOG_DIRS: "/tmp/kraft-combined-logs"
-      CLUSTER_ID: "4L6g3nShT-eMCtK--X86sw"
-```
-
-This first broker intentionally uses ephemeral container storage, matching Apache's single-node example. Authoritative round checkpoints must be saved by the central aggregator outside Kafka. Recreating the Kafka container will require recreating the topics.
+Open `.env` and confirm `CENTRAL_ZT_IP` matches the address shown by ZeroTier.
+The tracked Compose file uses KRaft, persists broker data in a named Docker
+volume, performs a health check, and creates the required topics automatically.
 
 Start and inspect Kafka:
 
@@ -266,45 +234,26 @@ The host-side port is bound specifically to the ZeroTier IP. This is important b
 
 ## 6. Create the federation topics
 
-The runnable pipeline currently uses exactly two topics. Round metadata travels
+The runnable pipeline uses exactly two topics. Round metadata travels
 inside the signed model envelopes, so separate control and metrics topics are
-not required by the current implementation.
+not required. The `kafka-init` Compose service creates both topics automatically.
 
-Run on the central VM:
-
-```bash
-sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
-  --bootstrap-server fcl-kafka:19092 --create --if-not-exists \
-  --topic fcl.global-model --partitions 1 --replication-factor 1 \
-  --config retention.ms=604800000
-
-sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
-  --bootstrap-server fcl-kafka:19092 --create --if-not-exists \
-  --topic fcl.client-updates --partitions 3 --replication-factor 1 \
-  --config retention.ms=86400000
-
-```
-
-List topics:
+Normally, just confirm they exist:
 
 ```bash
 sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
   --bootstrap-server fcl-kafka:19092 --list
 ```
 
+If either topic is missing, rerun `sudo docker compose up -d` from
+`distributed_federation/kafka`; the idempotent initializer will create it.
+
 ## 7. Verify access from every bank VM
 
-On each bank VM:
-
-```bash
-nc -vz 10.170.231.39 9092
-```
-
-If `nc` is unavailable:
-
-```bash
-sudo apt install -y netcat-openbsd
-```
+On each bank VM, test the actual Kafka client path instead of relying on
+`nc`. Complete the Python and configuration steps below, then run the client
+preflight from `QUICKSTART.md`. A passing preflight proves both the TCP
+connection and Kafka metadata access.
 
 Verify the Python Kafka client installed during VM setup:
 
@@ -352,7 +301,7 @@ For deployment beyond the demonstration, configure Kafka TLS/SASL and certificat
 
 An older guide used `... || { echo ...; exit 1; }`. In an interactive shell,
 `exit 1` closes the terminal when `.env` is invalid. Reopen the terminal, run
-`cd ~/fcl-kafka`, write the exact `.env` shown in Step 5, and use the non-exiting
+`cd ~/Capstone/distributed_federation/kafka`, confirm `.env` as shown in Step 5, and use the non-exiting
 `if` validation block in this version.
 
 ### After reboot, Kafka port 9092 is unavailable
@@ -361,18 +310,18 @@ ZeroTier may restore its IP after Docker first tries to bind to it. On the
 central VM, wait until `sudo zerotier-cli listnetworks` shows `OK`, then run:
 
 ```bash
-cd ~/fcl-kafka
+cd ~/Capstone/distributed_federation/kafka
 sudo docker compose up -d
 sudo docker compose ps
 sudo ss -lntp | grep ':9092'
 ```
 
-Then retry `nc -vz 10.170.231.39 9092` from the bank VM.
+Then retry the client preflight from the bank VM.
 
-### Ping reports zero received but `nc` succeeds
+### Ping reports zero received but Kafka preflight succeeds
 
 The successful TCP test is authoritative for Kafka. ICMP ping can be filtered
-without breaking port 9092. Do not disable UFW when `nc` and the Python metadata
+without breaking port 9092. Do not disable UFW when the Python preflight and metadata
 test both succeed.
 
 ### SSH asks for a password
@@ -392,7 +341,7 @@ Check:
 ```bash
 sudo ufw status verbose
 sudo ss -lntp | grep 9092
-sudo docker compose -f ~/fcl-kafka/compose.yaml logs --tail=100 kafka
+sudo docker compose -f ~/Capstone/distributed_federation/kafka/compose.yaml logs --tail=100 kafka
 ```
 
 Confirm `KAFKA_ADVERTISED_LISTENERS` contains the central ZeroTier IP.
@@ -402,7 +351,7 @@ Confirm `KAFKA_ADVERTISED_LISTENERS` contains the central ZeroTier IP.
 Stop Kafka, update `.env`, and recreate the container:
 
 ```bash
-cd ~/fcl-kafka
+cd ~/Capstone/distributed_federation/kafka
 sudo docker compose down
 sudo docker compose up -d
 ```
@@ -420,7 +369,7 @@ Do not start a distributed model run until all checks below pass:
 | `ping -c 3 10.170.231.39` | Every bank | Replies helpful; Kafka port test below is authoritative |
 | `sudo docker compose ps` | Central | Kafka state is running |
 | `kafka-broker-api-versions.sh` command above | Central | Broker information, no timeout |
-| `nc -vz 10.170.231.39 9092` | Every bank | Connection succeeded |
+| Client preflight from `QUICKSTART.md` | Every bank | `Preflight passed.` |
 | Python metadata test above | Every bank | `KAFKA_METADATA_TEST_OK` |
 
 If any check fails, stop at that row. Do not compensate by exposing Kafka on the Wi-Fi address or disabling the firewall globally.
