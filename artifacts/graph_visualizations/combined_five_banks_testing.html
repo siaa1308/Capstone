@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Combined five-bank flows — Testing</title>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { margin: 0; background: Canvas; color: CanvasText; }
+    header { padding: 16px 20px 6px; }
+    h1 { margin: 0 0 6px; font-size: 1.25rem; }
+    .meta { opacity: .75; font-size: .9rem; }
+    .controls { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; padding: 10px 20px; }
+    label { display: flex; gap: 7px; align-items: center; }
+    select { font: inherit; }
+    #graph { width: 100%; height: 700px; border-top: 1px solid color-mix(in srgb, CanvasText 18%, transparent); }
+    .bank-node { fill: #3977b8; stroke: Canvas; stroke-width: 2px; cursor: pointer; }
+    .bank-node.external { fill: #777; }
+    .bank-label { fill: CanvasText; font-size: 13px; text-anchor: middle; pointer-events: none; }
+    .flow { fill: none; stroke: #3977b8; stroke-opacity: .38; cursor: pointer; }
+    .flow.has-suspicious { stroke: #d62728; stroke-opacity: .68; }
+    .tooltip { position: absolute; display: none; max-width: 360px; padding: 9px 11px; border-radius: 6px;
+      background: Canvas; color: CanvasText; border: 1px solid color-mix(in srgb, CanvasText 25%, transparent);
+      box-shadow: 0 3px 14px #0004; pointer-events: none; font-size: .85rem; }
+    .legend { margin-left: auto; opacity: .78; font-size: .85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Combined five-bank flows — Testing</h1>
+    <div class="meta">133,914 transactions · 132 ground-truth fraud cases · external destinations grouped as Other Banks</div>
+  </header>
+  <div class="controls">
+    <label>Edge width
+      <select id="metric">
+        <option value="transaction_count">Transaction count</option>
+        <option value="total_amount">Total amount</option>
+        <option value="suspicious_count">Fraud count</option>
+      </select>
+    </label>
+    <label><input id="suspicious-only" type="checkbox"> Flows containing fraud only</label>
+    <span class="legend">Red = flow contains ground-truth fraud · Gray node = destinations outside the selected five</span>
+  </div>
+  <svg id="graph" role="img" aria-label="Combined directed transaction flows among five selected banks"></svg>
+  <div id="tooltip" class="tooltip" role="tooltip"></div>
+  <script>
+    const data = {"nodes":[{"id":"JPMorgan Chase","external":false},{"id":"Wells Fargo","external":false},{"id":"Citi","external":false},{"id":"Fifth Third Bancorp","external":false},{"id":"Key Bank","external":false},{"id":"Other Banks","external":true}],"links":[{"source":"Citi","target":"Citi","transaction_count":1284,"total_amount":2505057.33,"suspicious_count":2,"suspicious_amount":50417.939999999995,"fraud_rate":0.001557632398753894},{"source":"Citi","target":"Fifth Third Bancorp","transaction_count":248,"total_amount":767533.95,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"Citi","target":"JPMorgan Chase","transaction_count":701,"total_amount":3675901.67,"suspicious_count":2,"suspicious_amount":4743.64,"fraud_rate":0.0028530670470756064},{"source":"Citi","target":"Key Bank","transaction_count":179,"total_amount":487636.51999999996,"suspicious_count":3,"suspicious_amount":3617.97,"fraud_rate":0.01675977653631285},{"source":"Citi","target":"Other Banks","transaction_count":14874,"total_amount":78503092.21,"suspicious_count":11,"suspicious_amount":22309.579999999998,"fraud_rate":0.0007395455156649186},{"source":"Citi","target":"Wells Fargo","transaction_count":906,"total_amount":2795812.33,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"Fifth Third Bancorp","target":"Citi","transaction_count":521,"total_amount":435826.98,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"Fifth Third Bancorp","target":"Fifth Third Bancorp","transaction_count":427,"total_amount":1099402.8,"suspicious_count":3,"suspicious_amount":38609.369999999995,"fraud_rate":0.00702576112412178},{"source":"Fifth Third Bancorp","target":"JPMorgan Chase","transaction_count":1311,"total_amount":1665723.01,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"Fifth Third Bancorp","target":"Key Bank","transaction_count":293,"total_amount":678773.37,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"Fifth Third Bancorp","target":"Other Banks","transaction_count":13995,"total_amount":82486980.63,"suspicious_count":20,"suspicious_amount":72050.7,"fraud_rate":0.0014290818149339049},{"source":"Fifth Third Bancorp","target":"Wells Fargo","transaction_count":715,"total_amount":29495430.63,"suspicious_count":3,"suspicious_amount":334.26,"fraud_rate":0.004195804195804196},{"source":"JPMorgan Chase","target":"Citi","transaction_count":2010,"total_amount":9605051.17,"suspicious_count":1,"suspicious_amount":21247.17,"fraud_rate":0.0004975124378109452},{"source":"JPMorgan Chase","target":"Fifth Third Bancorp","transaction_count":1174,"total_amount":3854317.57,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"JPMorgan Chase","target":"JPMorgan Chase","transaction_count":5296,"total_amount":10932579.85,"suspicious_count":1,"suspicious_amount":11662.5,"fraud_rate":0.00018882175226586103},{"source":"JPMorgan Chase","target":"Key Bank","transaction_count":1052,"total_amount":3857849.29,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"JPMorgan Chase","target":"Other Banks","transaction_count":49855,"total_amount":190025462.16,"suspicious_count":16,"suspicious_amount":135913.19,"fraud_rate":0.00032093069902717884},{"source":"JPMorgan Chase","target":"Wells Fargo","transaction_count":2915,"total_amount":7051491.04,"suspicious_count":1,"suspicious_amount":57.33,"fraud_rate":0.00034305317324185246},{"source":"Key Bank","target":"Citi","transaction_count":303,"total_amount":894889.81,"suspicious_count":1,"suspicious_amount":77.74,"fraud_rate":0.0033003300330033004},{"source":"Key Bank","target":"Fifth Third Bancorp","transaction_count":183,"total_amount":346811.22,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"Key Bank","target":"JPMorgan Chase","transaction_count":492,"total_amount":3363705.91,"suspicious_count":2,"suspicious_amount":4905.299999999999,"fraud_rate":0.0040650406504065045},{"source":"Key Bank","target":"Key Bank","transaction_count":372,"total_amount":436244.08999999997,"suspicious_count":8,"suspicious_amount":11579.42,"fraud_rate":0.021505376344086023},{"source":"Key Bank","target":"Other Banks","transaction_count":9229,"total_amount":28221702.36,"suspicious_count":33,"suspicious_amount":322823.03,"fraud_rate":0.003575685339690107},{"source":"Key Bank","target":"Wells Fargo","transaction_count":615,"total_amount":2434629.7600000002,"suspicious_count":1,"suspicious_amount":1291.53,"fraud_rate":0.0016260162601626016},{"source":"Wells Fargo","target":"Citi","transaction_count":785,"total_amount":1380742.1300000001,"suspicious_count":1,"suspicious_amount":29.72,"fraud_rate":0.0012738853503184713},{"source":"Wells Fargo","target":"Fifth Third Bancorp","transaction_count":372,"total_amount":5319150.39,"suspicious_count":3,"suspicious_amount":3883.48,"fraud_rate":0.008064516129032258},{"source":"Wells Fargo","target":"JPMorgan Chase","transaction_count":1146,"total_amount":1866140.54,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0},{"source":"Wells Fargo","target":"Key Bank","transaction_count":348,"total_amount":904914.9400000001,"suspicious_count":1,"suspicious_amount":602.75,"fraud_rate":0.0028735632183908046},{"source":"Wells Fargo","target":"Other Banks","transaction_count":20329,"total_amount":58064404.17,"suspicious_count":19,"suspicious_amount":54689.29,"fraud_rate":0.0009346254119730435},{"source":"Wells Fargo","target":"Wells Fargo","transaction_count":1984,"total_amount":5156879.99,"suspicious_count":0,"suspicious_amount":0.0,"fraud_rate":0.0}]};
+    const svg = d3.select("#graph"), tip = d3.select("#tooltip");
+    function draw() {
+      svg.selectAll("*").remove();
+      const width = svg.node().clientWidth, height = svg.node().clientHeight;
+      const metric = document.getElementById("metric").value;
+      const suspiciousOnly = document.getElementById("suspicious-only").checked;
+      const links = data.links.filter(d => !suspiciousOnly || d.suspicious_count > 0);
+      const cx = width / 2, cy = height / 2, radius = Math.min(width, height) * .34;
+      const nodeById = new Map();
+      data.nodes.forEach((d, i) => {
+        const angle = -Math.PI / 2 + i * Math.PI * 2 / data.nodes.length;
+        nodeById.set(d.id, {...d, x: cx + radius*Math.cos(angle), y: cy + radius*Math.sin(angle)});
+      });
+      const values = links.map(d => d[metric]);
+      const maxValue = d3.max(values) || 1;
+      const edgeWidth = d3.scaleSqrt().domain([0, maxValue]).range([1, 18]);
+      const totalByBank = new Map(data.nodes.map(d => [d.id, 0]));
+      data.links.forEach(d => {
+        totalByBank.set(d.source, totalByBank.get(d.source) + d.transaction_count);
+        totalByBank.set(d.target, totalByBank.get(d.target) + d.transaction_count);
+      });
+      const nodeSize = d3.scaleSqrt().domain([0, d3.max([...totalByBank.values()]) || 1]).range([24, 48]);
+      const defs = svg.append("defs");
+      defs.append("marker").attr("id","arrow").attr("viewBox","0 -5 10 10").attr("refX",10).attr("refY",0)
+        .attr("markerWidth",5).attr("markerHeight",5).attr("orient","auto").append("path").attr("d","M0,-5L10,0L0,5").attr("fill","context-stroke");
+      function path(d) {
+        const s=nodeById.get(d.source), t=nodeById.get(d.target);
+        if (s.id === t.id) {
+          const r=nodeSize(totalByBank.get(s.id));
+          return `M${s.x-r*.65},${s.y-r*.65} C${s.x-r*2.5},${s.y-r*2.8} ${s.x+r*2.5},${s.y-r*2.8} ${s.x+r*.65},${s.y-r*.65}`;
+        }
+        const mx=(s.x+t.x)/2, my=(s.y+t.y)/2;
+        const dx=t.x-s.x, dy=t.y-s.y, bend=.13;
+        return `M${s.x},${s.y} Q${mx-dy*bend},${my+dx*bend} ${t.x},${t.y}`;
+      }
+      svg.append("g").selectAll("path").data(links).join("path")
+        .attr("class",d=>d.suspicious_count>0?"flow has-suspicious":"flow")
+        .attr("d",path).attr("stroke-width",d=>edgeWidth(d[metric])).attr("marker-end","url(#arrow)")
+        .on("mousemove",(e,d)=>tip.style("display","block").style("left",`${e.pageX+12}px`).style("top",`${e.pageY+12}px`)
+          .html(`<b>${d.source} → ${d.target}</b><br>Transactions: ${d.transaction_count.toLocaleString()}<br>Total amount: ${d.total_amount.toLocaleString(undefined,{maximumFractionDigits:2})}<br>Fraud cases: ${d.suspicious_count.toLocaleString()}<br>Fraud rate: ${(d.fraud_rate*100).toFixed(4)}%`))
+        .on("mouseleave",()=>tip.style("display","none"));
+      const ng=svg.append("g").selectAll("g").data([...nodeById.values()]).join("g").attr("transform",d=>`translate(${d.x},${d.y})`);
+      ng.append("circle").attr("class",d=>d.external?"bank-node external":"bank-node")
+        .attr("r",d=>nodeSize(totalByBank.get(d.id)))
+        .on("mousemove",(e,d)=>tip.style("display","block").style("left",`${e.pageX+12}px`).style("top",`${e.pageY+12}px`)
+          .html(`<b>${d.id}</b><br>Incident flow transactions: ${totalByBank.get(d.id).toLocaleString()}`))
+        .on("mouseleave",()=>tip.style("display","none"));
+      ng.append("text").attr("class","bank-label").attr("y",d=>nodeSize(totalByBank.get(d.id))+20)
+        .each(function(d) {
+          const words=d.id.split(" "), line1=words.slice(0,2).join(" "), line2=words.slice(2).join(" ");
+          d3.select(this).append("tspan").attr("x",0).text(line1);
+          if(line2) d3.select(this).append("tspan").attr("x",0).attr("dy",15).text(line2);
+        });
+    }
+    document.getElementById("metric").addEventListener("change",draw);
+    document.getElementById("suspicious-only").addEventListener("change",draw);
+    window.addEventListener("resize",draw);
+    draw();
+  </script>
+</body>
+</html>
