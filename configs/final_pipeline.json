@@ -1,0 +1,60 @@
+{
+  "status": "frozen",
+  "primary_metric": "PR-AUC",
+  "active_banks": [
+    "JPMorgan_Chase",
+    "Wells_Fargo",
+    "Key_Bank"
+  ],
+  "excluded_from_new_modeling": [
+    "Citi",
+    "Fifth_Third_Bancorp"
+  ],
+  "seeds": [42, 52, 62],
+  "temporal_split": {
+    "training": "June-July 2025",
+    "validation": "August 2025",
+    "test": "September 2025"
+  },
+  "common": {
+    "dataset": "data/final_temporal_dataset",
+    "hidden_channels": 128,
+    "dropout": 0.25,
+    "batch_size": 1024,
+    "tbptt_steps": 2,
+    "negative_ratio": 20,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "shared_training_only_feature_encoder": true,
+    "alert_budgets": [10, 25, 50]
+  },
+  "local": {
+    "epochs": 25,
+    "patience": 5,
+    "checkpoint_selection": "per-bank validation PR-AUC"
+  },
+  "continual_learning": {
+    "epochs_per_task": 20,
+    "replay_capacity": 2000,
+    "tasks": [
+      "June",
+      "July plus June replay"
+    ],
+    "replay_sampling": "all historical positives, then uniform historical negatives to capacity"
+  },
+  "fedavg": {
+    "algorithm": "FedAvg",
+    "local_training": "continual_replay",
+    "replay_capacity": 2000,
+    "local_epochs_per_task_per_round": 3,
+    "rounds": 16,
+    "round_patience": 0,
+    "client_weighting": "uniform",
+    "server_learning_rate": 1.0,
+    "checkpoint_selection": "highest unweighted macro-bank validation PR-AUC"
+  },
+  "fedprox": {
+    "included_in_final_pipeline": false
+  }
+}

@@ -14,8 +14,8 @@ import torch
 
 from causal_temporal_graphsage import (
     BANKS, DEFAULT_DATASET, DEFAULT_OUTPUT, CausalTemporalGraphSAGE, Events,
-    alert_budget_metrics, batches, build_bank_data, choose_threshold, metric_block,
-    epoch_sample_mask, fit_shared_feature_encoders, masked_loss, score_stream, set_seed,
+    alert_budget_metrics, build_bank_data, choose_threshold, metric_block,
+    epoch_sample_mask, fit_shared_feature_encoders, score_stream, set_seed, train_temporal_epoch,
 )
 
 
@@ -31,6 +31,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--batch-size", type=int, default=512)
+    parser.add_argument("--tbptt-steps", type=int, default=2,
+                        help="Temporal batches per optimizer step; must remain >1 to train memory-update modules.")
     parser.add_argument("--alert-k", default="10,25,50")
     parser.add_argument("--validation-only", action="store_true",
                         help="Skip the test stream during hyperparameter searches.")
@@ -40,7 +42,7 @@ def parse_args() -> argparse.Namespace:
                         default=DEFAULT_OUTPUT.parent / "continual_temporal_graphsage")
     args = parser.parse_args()
     if (args.epochs_per_task < 1 or args.replay_size < 0 or args.negative_ratio < 0 or
-            args.batch_size < 1 or args.weight_decay < 0):
+            args.batch_size < 1 or args.tbptt_steps < 2 or args.weight_decay < 0):
         parser.error("epochs-per-task and batch-size must be positive; replay-size and negative-ratio cannot be negative")
     return args
 
@@ -61,21 +63,10 @@ def concat_chronological(first: Events, second: Events) -> Events:
 def train_task(model, static, events, optimizer, cfg, seed: int) -> None:
     generator = torch.Generator(device=static.device).manual_seed(seed)
     for _ in range(cfg.epochs_per_task):
-        model.train()
-        state = model.initial_state(static)
         epoch_mask = epoch_sample_mask(events.labels, cfg.negative_ratio, generator)
-        offset = 0
-        for event_batch in batches(events, cfg.batch_size):
-            optimizer.zero_grad()
-            logits, state = model.score_and_update(state, event_batch)
-            batch_mask = epoch_mask[offset:offset + len(event_batch)]
-            offset += len(event_batch)
-            loss = masked_loss(logits, event_batch.labels, batch_mask)
-            if loss is not None:
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
-                optimizer.step()
-            state = state.detached()
+        train_temporal_epoch(
+            model, static, events, optimizer, epoch_mask, cfg.batch_size, cfg.tbptt_steps,
+        )
 
 
 def retention_metrics(model, static, events, batch_size: int) -> dict[str, float]:
@@ -105,8 +96,9 @@ def run_bank(
 ) -> tuple[dict[str, object], dict[str, torch.Tensor]]:
     seed = cfg.seed + BANKS.index(bank) * 10_000
     set_seed(seed)
+    development_splits = ("training", "validation") if cfg.validation_only else ("training", "validation", "testing")
     static, streams, node_columns, edge_columns = build_bank_data(
-        cfg.dataset_dir, bank, node_encoder, edge_encoder,
+        cfg.dataset_dir, bank, node_encoder, edge_encoder, development_splits,
     )
     static = static.to(device)
     streams = {name: events.to(device) for name, events in streams.items()}

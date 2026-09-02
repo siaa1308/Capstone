@@ -1,0 +1,42 @@
+{
+  "status": "frozen_before_corrected_fedavg_september_evaluation",
+  "selection_source": "artifacts/historical/corrected_development/fedavg_collapse_investigation/development/cl_replay_e3_r16_uniform",
+  "selection_metric": "macro August validation PR-AUC",
+  "active_banks": ["JPMorgan_Chase", "Wells_Fargo", "Key_Bank"],
+  "seeds": [42, 52, 62],
+  "configuration": {
+    "algorithm": "fedavg",
+    "local_training": "continual_replay",
+    "replay_size": 2000,
+    "rounds": 16,
+    "patience": 0,
+    "local_epochs_per_task_per_round": 3,
+    "client_weighting": "uniform",
+    "server_learning_rate": 1.0,
+    "temporal_server_learning_rate": null,
+    "hidden_channels": 128,
+    "dropout": 0.25,
+    "batch_size": 1024,
+    "tbptt_steps": 2,
+    "negative_ratio": 20,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "feature_encoder": "shared active-cohort training-only",
+    "local_tasks": ["June", "July plus 2000-event June replay"],
+    "optimizer_state_policy": "retained across the two local CL tasks; reset for each client at each new global round",
+    "global_checkpoint_selection": "highest unweighted macro bank validation PR-AUC across 16 rounds"
+  },
+  "validation_evidence": {
+    "macro_pr_auc_mean": 0.7355463444163788,
+    "macro_pr_auc_sample_sd": 0.09423495761691973,
+    "seed_42": 0.7722973421947842,
+    "seed_52": 0.8058683672444223,
+    "seed_62": 0.6284733238099297
+  },
+  "constraints": {
+    "no_hyperparameter_changes_after_september": true,
+    "do_not_rerun_local_or_cl": true,
+    "corrected_fedavg_september_runs_per_seed": 1
+  }
+}

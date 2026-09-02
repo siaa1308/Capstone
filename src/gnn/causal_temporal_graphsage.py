@@ -120,6 +120,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--event-batch-size", type=int, default=512)
+    parser.add_argument("--tbptt-steps", type=int, default=2,
+                        help="Temporal batches per optimizer step; must remain >1 to train memory-update modules.")
     parser.add_argument("--negative-ratio", type=int, default=20)
     parser.add_argument("--loss-pos-weight", type=float, default=1.0)
     parser.add_argument("--full-training-weighted-bce", action="store_true")
@@ -152,9 +154,11 @@ def columns_from_manifest(dataset: Path, node_frame: pd.DataFrame, edge_frame: p
     return node_columns, edge_columns
 
 
-def load_bank_frames(dataset: Path, bank: str) -> tuple[dict[str, pd.DataFrame], dict[str, pd.DataFrame], dict[str, pd.DataFrame]]:
+def load_bank_frames(
+    dataset: Path, bank: str, splits: tuple[str, ...] = SPLITS,
+) -> tuple[dict[str, pd.DataFrame], dict[str, pd.DataFrame], dict[str, pd.DataFrame]]:
     nodes, maps, edges = {}, {}, {}
-    for split in SPLITS:
+    for split in splits:
         directory = dataset / split / bank
         nodes[split] = pd.read_csv(directory / "node_features.csv.gz")
         maps[split] = pd.read_csv(directory / "node_map.csv.gz")
@@ -191,19 +195,22 @@ def make_events(
 
 def build_bank_data(
     dataset: Path, bank: str, node_encoder: FeatureEncoder | None = None, edge_encoder: FeatureEncoder | None = None,
+    splits: tuple[str, ...] = SPLITS,
 ) -> tuple[Tensor, dict[str, Events], list[str], list[str]]:
-    nodes, maps, edges = load_bank_frames(dataset, bank)
+    if "training" not in splits:
+        raise ValueError("training must be included when building bank data")
+    nodes, maps, edges = load_bank_frames(dataset, bank, splits)
     node_columns, edge_columns = columns_from_manifest(dataset, nodes["training"], edges["training"])
     node_encoder = node_encoder or FeatureEncoder(node_columns).fit(nodes["training"])
     edge_encoder = edge_encoder or FeatureEncoder(edge_columns).fit(edges["training"])
 
     # Local node IDs are deliberately split-specific.  Convert through account_id
     # to one stable bank-local ID space so that account memory persists over time.
-    account_ids = pd.concat([maps[split]["account_id"] for split in SPLITS], ignore_index=True).drop_duplicates().tolist()
+    account_ids = pd.concat([maps[split]["account_id"] for split in splits], ignore_index=True).drop_duplicates().tolist()
     account_to_global = {account_id: index for index, account_id in enumerate(account_ids)}
     local_to_global: dict[str, dict[int, int]] = {}
     account_features: list[pd.DataFrame] = []
-    for split in SPLITS:
+    for split in splits:
         joined = nodes[split].merge(maps[split], on="node_id", how="inner", validate="one_to_one")
         local_to_global[split] = dict(zip(joined["node_id"].astype(int), joined["account_id"].map(account_to_global).astype(int)))
         # First available pre-period account snapshot is used. Training snapshots
@@ -214,8 +221,8 @@ def build_bank_data(
     static = np.zeros((len(account_to_global), len(node_encoder.transform(nodes["training"])[0])), dtype=np.float32)
     transformed = node_encoder.transform(selected_features)
     static[selected_features["global_id"].to_numpy(dtype=np.int64)] = transformed
-    origin = min(pd.to_datetime(edges[split]["timestamp"]).min() for split in SPLITS)
-    events = {split: make_events(edges[split], local_to_global[split], edge_encoder, origin) for split in SPLITS}
+    origin = min(pd.to_datetime(edges[split]["timestamp"]).min() for split in splits)
+    events = {split: make_events(edges[split], local_to_global[split], edge_encoder, origin) for split in splits}
     return torch.from_numpy(static), events, node_columns, edge_columns
 
 
@@ -223,7 +230,7 @@ def fit_shared_feature_encoders(dataset: Path, banks: tuple[str, ...] = BANKS) -
     """Fit one training-only schema so FedAvg clients have compatible tensors."""
     node_frames, edge_frames = [], []
     for bank in banks:
-        nodes, _maps, edges = load_bank_frames(dataset, bank)
+        nodes, _maps, edges = load_bank_frames(dataset, bank, ("training",))
         node_frames.append(nodes["training"])
         edge_frames.append(edges["training"])
     node_columns, edge_columns = columns_from_manifest(dataset, node_frames[0], edge_frames[0])
@@ -316,6 +323,48 @@ def masked_loss(logits: Tensor, labels: Tensor, mask: Tensor, pos_weight: float 
     )
 
 
+def train_temporal_epoch(
+    model: CausalTemporalGraphSAGE, static: Tensor, events: Events, optimizer: torch.optim.Optimizer,
+    sample_mask: Tensor, batch_size: int, tbptt_steps: int, pos_weight: float = 1.0,
+) -> tuple[float, int]:
+    """Train chronologically while retaining gradients across a bounded temporal window."""
+    model.train()
+    state = model.initial_state(static)
+    offset = 0
+    total_weighted_loss = 0.0
+    total_examples = 0
+    optimizer_steps = 0
+    pending_loss = None
+    pending_examples = 0
+    optimizer.zero_grad()
+    event_batches = list(batches(events, batch_size))
+    for batch_index, event_batch in enumerate(event_batches, start=1):
+        logits, state = model.score_and_update(state, event_batch)
+        batch_mask = sample_mask[offset:offset + len(event_batch)]
+        offset += len(event_batch)
+        loss = masked_loss(logits, event_batch.labels, batch_mask, pos_weight)
+        if loss is not None:
+            selected = int(batch_mask.sum().item())
+            weighted_loss = loss * selected
+            pending_loss = weighted_loss if pending_loss is None else pending_loss + weighted_loss
+            pending_examples += selected
+            total_weighted_loss += float(loss.detach().item()) * selected
+            total_examples += selected
+
+        window_end = batch_index % tbptt_steps == 0 or batch_index == len(event_batches)
+        if window_end and pending_examples:
+            (pending_loss / pending_examples).backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+            optimizer.step()
+            optimizer.zero_grad()
+            optimizer_steps += 1
+            pending_loss = None
+            pending_examples = 0
+        if window_end:
+            state = state.detached()
+    return total_weighted_loss / max(total_examples, 1), optimizer_steps
+
+
 @torch.no_grad()
 def score_stream(model: CausalTemporalGraphSAGE, state: TemporalState, events: Events, batch_size: int) -> tuple[np.ndarray, np.ndarray, TemporalState]:
     model.eval()
@@ -374,7 +423,10 @@ def train_bank(
 ) -> dict[str, object]:
     bank_seed = args.seed + BANKS.index(bank) * 10_000
     set_seed(bank_seed)
-    static, event_sets, node_columns, edge_columns = build_bank_data(args.dataset_dir, bank, node_encoder, edge_encoder)
+    development_splits = ("training", "validation") if args.validation_only else SPLITS
+    static, event_sets, node_columns, edge_columns = build_bank_data(
+        args.dataset_dir, bank, node_encoder, edge_encoder, development_splits,
+    )
     static = static.to(device)
     event_sets = {split: event_set.to(device) for split, event_set in event_sets.items()}
     model = CausalTemporalGraphSAGE(static.shape[1], event_sets["training"].edge_attr.shape[1], args.hidden_channels, args.dropout).to(device)
@@ -388,27 +440,15 @@ def train_bank(
     generator = torch.Generator(device=device).manual_seed(bank_seed)
     best_state: dict[str, Tensor] | None = None
     best_score, best_epoch, stale, stop_epoch = -np.inf, None, 0, None
-    print(f"\n{bank}: train={len(labels):,}, positives={positives:,}, validation={len(event_sets['validation']):,}, test={len(event_sets['testing']):,}")
+    test_count = len(event_sets["testing"]) if "testing" in event_sets else "not loaded"
+    print(f"\n{bank}: train={len(labels):,}, positives={positives:,}, validation={len(event_sets['validation']):,}, test={test_count}")
     print(f"  causal batch={args.event_batch_size}, sampled_negatives_per_epoch={sampled_negatives:,}, loss_pos_weight={weight:.6f}")
     for epoch in range(1, args.epochs + 1):
-        model.train()
-        state = model.initial_state(static)
-        total_loss, updates = 0.0, 0
         epoch_mask = epoch_sample_mask(labels, ratio, generator)
-        offset = 0
-        for event_batch in batches(event_sets["training"], args.event_batch_size):
-            optimizer.zero_grad()
-            logits, state = model.score_and_update(state, event_batch)
-            batch_mask = epoch_mask[offset:offset + len(event_batch)]
-            offset += len(event_batch)
-            loss = masked_loss(logits, event_batch.labels, batch_mask, weight)
-            if loss is not None:
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
-                optimizer.step()
-                total_loss += float(loss.item())
-                updates += 1
-            state = state.detached()  # truncated BPTT; state is historical, not future data.
+        mean_loss, updates = train_temporal_epoch(
+            model, static, event_sets["training"], optimizer, epoch_mask,
+            args.event_batch_size, args.tbptt_steps, weight,
+        )
         # Reconstruct memory with the frozen end-of-epoch parameters.  Reusing the
         # training-loop state would mix memories produced by many intermediate
         # parameter values, so its validation score would not reproduce after the
@@ -427,7 +467,7 @@ def train_bank(
         else:
             stale += 1
         if epoch == 1 or epoch % 10 == 0:
-            print(f"  epoch={epoch:03d} train_loss={total_loss / max(updates, 1):.5f} validation_pr_auc={val_pr_auc:.5f}")
+            print(f"  epoch={epoch:03d} train_loss={mean_loss:.5f} optimizer_steps={updates} validation_pr_auc={val_pr_auc:.5f}")
         if stale >= args.patience:
             stop_epoch = epoch
             print(f"  early stopping at epoch {epoch}; best validation PR-AUC={best_score:.5f}")
@@ -476,7 +516,7 @@ def train_bank(
 
 def main() -> None:
     args = parse_args()
-    if (args.epochs < 1 or args.patience < 1 or args.event_batch_size < 1 or
+    if (args.epochs < 1 or args.patience < 1 or args.event_batch_size < 1 or args.tbptt_steps < 2 or
             args.negative_ratio < 0 or args.loss_pos_weight <= 0 or args.weight_decay < 0):
         raise SystemExit("Invalid training argument")
     args.dataset_dir = args.dataset_dir.resolve()

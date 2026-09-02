@@ -1,0 +1,218 @@
+[
+  {
+    "bank": "JPMorgan_Chase",
+    "seed": 52,
+    "strategy": "negative-sampled BCE",
+    "training_positives": 65,
+    "training_negatives": 126358,
+    "sampled_negatives_per_epoch": 1300,
+    "loss_pos_weight": 1.0,
+    "best_validation_pr_auc": 0.419785109536862,
+    "best_validation_epoch": 2,
+    "early_stopping_epoch": 7,
+    "calibration": "none",
+    "threshold": 0.6331493258476257,
+    "validation": {
+      "pr_auc": 0.419785109536862,
+      "roc_auc": 0.9845211412883312,
+      "precision": 1.0,
+      "recall": 0.0625,
+      "f1": 0.11764705882352941
+    },
+    "validation_raw": {
+      "pr_auc": 0.419785109536862,
+      "roc_auc": 0.9845211412883312,
+      "precision": 1.0,
+      "recall": 0.0625,
+      "f1": 0.11764705882352941
+    },
+    "validation_alert_metrics": {
+      "10": {
+        "alerts": 10,
+        "true_positives": 6,
+        "precision_at_k": 0.6,
+        "recall_at_k": 0.375
+      },
+      "25": {
+        "alerts": 25,
+        "true_positives": 7,
+        "precision_at_k": 0.28,
+        "recall_at_k": 0.4375
+      },
+      "50": {
+        "alerts": 50,
+        "true_positives": 8,
+        "precision_at_k": 0.16,
+        "recall_at_k": 0.5
+      }
+    },
+    "node_feature_columns": [
+      "Account_Country",
+      "Account_Currency",
+      "Entity_Type",
+      "Does_Account_Have_Debit_Card",
+      "DebitCard_Index_in_EntityCards",
+      "MCC",
+      "Account_Type",
+      "Max_Overdraft",
+      "account_kind",
+      "hist_sent_count",
+      "hist_sent_amount_sum",
+      "hist_recv_count",
+      "hist_recv_amount_sum",
+      "hist_out_degree",
+      "hist_in_degree"
+    ],
+    "edge_feature_columns": [
+      "amount",
+      "currency",
+      "Amount_Received",
+      "Receiving_Currency",
+      "payment_format"
+    ]
+  },
+  {
+    "bank": "Wells_Fargo",
+    "seed": 10052,
+    "strategy": "negative-sampled BCE",
+    "training_positives": 80,
+    "training_negatives": 50266,
+    "sampled_negatives_per_epoch": 1600,
+    "loss_pos_weight": 1.0,
+    "best_validation_pr_auc": 0.37859326859271725,
+    "best_validation_epoch": 19,
+    "early_stopping_epoch": 24,
+    "calibration": "none",
+    "threshold": 0.3651418271660795,
+    "validation": {
+      "pr_auc": 0.37859326859271725,
+      "roc_auc": 0.9297098872969034,
+      "precision": 0.25,
+      "recall": 0.5909090909090909,
+      "f1": 0.35135135135135137
+    },
+    "validation_raw": {
+      "pr_auc": 0.37859326859271725,
+      "roc_auc": 0.9297098872969034,
+      "precision": 0.25,
+      "recall": 0.5909090909090909,
+      "f1": 0.35135135135135137
+    },
+    "validation_alert_metrics": {
+      "10": {
+        "alerts": 10,
+        "true_positives": 5,
+        "precision_at_k": 0.5,
+        "recall_at_k": 0.22727272727272727
+      },
+      "25": {
+        "alerts": 25,
+        "true_positives": 5,
+        "precision_at_k": 0.2,
+        "recall_at_k": 0.22727272727272727
+      },
+      "50": {
+        "alerts": 50,
+        "true_positives": 13,
+        "precision_at_k": 0.26,
+        "recall_at_k": 0.5909090909090909
+      }
+    },
+    "node_feature_columns": [
+      "Account_Country",
+      "Account_Currency",
+      "Entity_Type",
+      "Does_Account_Have_Debit_Card",
+      "DebitCard_Index_in_EntityCards",
+      "MCC",
+      "Account_Type",
+      "Max_Overdraft",
+      "account_kind",
+      "hist_sent_count",
+      "hist_sent_amount_sum",
+      "hist_recv_count",
+      "hist_recv_amount_sum",
+      "hist_out_degree",
+      "hist_in_degree"
+    ],
+    "edge_feature_columns": [
+      "amount",
+      "currency",
+      "Amount_Received",
+      "Receiving_Currency",
+      "payment_format"
+    ]
+  },
+  {
+    "bank": "Key_Bank",
+    "seed": 20052,
+    "strategy": "negative-sampled BCE",
+    "training_positives": 100,
+    "training_negatives": 22312,
+    "sampled_negatives_per_epoch": 2000,
+    "loss_pos_weight": 1.0,
+    "best_validation_pr_auc": 0.5251479505157232,
+    "best_validation_epoch": 20,
+    "early_stopping_epoch": 25,
+    "calibration": "none",
+    "threshold": 0.45434699749945084,
+    "validation": {
+      "pr_auc": 0.5251479505157232,
+      "roc_auc": 0.99667832386969,
+      "precision": 0.5217391304347826,
+      "recall": 0.5714285714285714,
+      "f1": 0.5454545454545454
+    },
+    "validation_raw": {
+      "pr_auc": 0.5251479505157232,
+      "roc_auc": 0.99667832386969,
+      "precision": 0.5217391304347826,
+      "recall": 0.5714285714285714,
+      "f1": 0.5454545454545454
+    },
+    "validation_alert_metrics": {
+      "10": {
+        "alerts": 10,
+        "true_positives": 6,
+        "precision_at_k": 0.6,
+        "recall_at_k": 0.2857142857142857
+      },
+      "25": {
+        "alerts": 25,
+        "true_positives": 12,
+        "precision_at_k": 0.48,
+        "recall_at_k": 0.5714285714285714
+      },
+      "50": {
+        "alerts": 50,
+        "true_positives": 13,
+        "precision_at_k": 0.26,
+        "recall_at_k": 0.6190476190476191
+      }
+    },
+    "node_feature_columns": [
+      "Account_Country",
+      "Account_Currency",
+      "Entity_Type",
+      "Does_Account_Have_Debit_Card",
+      "DebitCard_Index_in_EntityCards",
+      "MCC",
+      "Account_Type",
+      "Max_Overdraft",
+      "account_kind",
+      "hist_sent_count",
+      "hist_sent_amount_sum",
+      "hist_recv_count",
+      "hist_recv_amount_sum",
+      "hist_out_degree",
+      "hist_in_degree"
+    ],
+    "edge_feature_columns": [
+      "amount",
+      "currency",
+      "Amount_Received",
+      "Receiving_Currency",
+      "payment_format"
+    ]
+  }
+]

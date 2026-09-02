@@ -21,11 +21,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset-dir", type=Path, default=ROOT / "data" / "final_temporal_dataset")
     parser.add_argument(
         "--fedavg-metrics", type=Path,
-        default=ROOT / "artifacts" / "optimized_fedavg" / "development" / "stability" / "seed_42" / "metrics.json",
+        default=(ROOT / "artifacts" / "historical" / "validation_search" / "optimized_fedavg"
+                 / "development" / "stability" / "seed_42" / "metrics.json"),
     )
     parser.add_argument(
         "--output-dir", type=Path,
-        default=ROOT / "artifacts" / "optimized_fedavg" / "diagnostics",
+        default=(ROOT / "artifacts" / "historical" / "validation_search"
+                 / "optimized_fedavg" / "diagnostics"),
     )
     return parser.parse_args()
 

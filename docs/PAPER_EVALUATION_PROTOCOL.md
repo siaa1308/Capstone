@@ -28,14 +28,15 @@ September, but those values are frozen confirmatory diagnostics—not a genuinel
 untouched test estimate. The repository contains no later raw period. A
 post-September period is required for an unbiased final generalization claim.
 
-## Required comparisons
+## Final comparisons
 
-1. Leakage-safe tabular XGBoost baseline.
-2. Static GraphSAGE baseline.
-3. Local causal temporal GraphSAGE (one model per bank).
-4. Federated causal temporal GraphSAGE using FedAvg.
-5. Federated continual causal temporal GraphSAGE without replay.
-6. Federated continual causal temporal GraphSAGE with replay.
+1. Corrected Local causal Temporal GraphSAGE (one model per active bank).
+2. The same corrected model with chronological continual learning and replay.
+3. Corrected federated continual Temporal GraphSAGE using FedAvg.
+
+Static GraphSAGE, XGBoost, no-replay federated runs, the original mismatched
+FedAvg run, and FedProx remain historical or diagnostic evidence. They are not
+members of the final three-method progression.
 
 Every GNN comparison must use the same safe feature schema, hidden size, negative
 sampling policy, seed list, and validation-only selection rules unless the
