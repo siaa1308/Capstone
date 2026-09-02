@@ -1,0 +1,35 @@
+{
+  "frozen_before_september_evaluation": true,
+  "active_banks": ["JPMorgan_Chase", "Wells_Fargo", "Key_Bank"],
+  "seeds": [42, 52, 62],
+  "common": {
+    "dataset": "data/final_temporal_dataset",
+    "hidden_channels": 128,
+    "dropout": 0.25,
+    "batch_size": 1024,
+    "tbptt_steps": 2,
+    "negative_ratio": 20,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "shared_training_only_encoder": true
+  },
+  "local": {
+    "epochs": 25,
+    "patience": 5,
+    "checkpoint_selection": "per-bank validation PR-AUC"
+  },
+  "continual_learning": {
+    "epochs_per_task": 20,
+    "replay_size": 2000,
+    "replay_strategy": "all historical positives, then uniform historical negatives to capacity",
+    "tasks": ["June", "July plus replay"]
+  },
+  "fedavg": {
+    "rounds": 12,
+    "round_patience": 3,
+    "local_epochs": 2,
+    "client_weighting": "training sample count",
+    "checkpoint_selection": "macro validation PR-AUC"
+  }
+}

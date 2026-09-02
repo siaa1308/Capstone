@@ -1,0 +1,78 @@
+{
+  "active_banks": [
+    "JPMorgan_Chase",
+    "Wells_Fargo",
+    "Key_Bank"
+  ],
+  "training_bank_statistics": [
+    {
+      "bank": "JPMorgan_Chase",
+      "transactions": 126423,
+      "positives": 65,
+      "fraud_rate": 0.00051414695110858,
+      "nodes": 24906,
+      "edges_per_node": 5.07600578173934,
+      "amount_mean": 3561.8795273803016,
+      "amount_std": 68932.60860899035
+    },
+    {
+      "bank": "Wells_Fargo",
+      "transactions": 50346,
+      "positives": 80,
+      "fraud_rate": 0.001589004091685536,
+      "nodes": 11292,
+      "edges_per_node": 4.45855472901169,
+      "amount_mean": 2988.516409248004,
+      "amount_std": 42062.826968353045
+    },
+    {
+      "bank": "Key_Bank",
+      "transactions": 22412,
+      "positives": 100,
+      "fraud_rate": 0.004461895413171516,
+      "nodes": 5314,
+      "edges_per_node": 4.217538577342868,
+      "amount_mean": 3112.690494378012,
+      "amount_std": 84932.16095048859
+    }
+  ],
+  "volume_max_to_min_ratio": 5.640862038193824,
+  "fraud_rate_max_to_min_ratio": 8.678249289528962,
+  "pairwise_label_js_divergence_bits": {
+    "JPMorgan_Chase__Wells_Fargo": 0.00020801355085554743,
+    "JPMorgan_Chase__Key_Bank": 0.0012979663996145927,
+    "Wells_Fargo__Key_Bank": 0.0005138412167372662
+  },
+  "pairwise_currency_js_divergence_bits": {
+    "JPMorgan_Chase__Wells_Fargo": 0.0002017331574260188,
+    "JPMorgan_Chase__Key_Bank": 0.000232214844574716,
+    "Wells_Fargo__Key_Bank": 6.693166262876285e-05
+  },
+  "pairwise_payment_format_js_divergence_bits": {
+    "JPMorgan_Chase__Wells_Fargo": 0.0005782645392236454,
+    "JPMorgan_Chase__Key_Bank": 0.004893667025247762,
+    "Wells_Fargo__Key_Bank": 0.003574649346776507
+  },
+  "pairwise_amount_standardized_mean_difference": {
+    "JPMorgan_Chase__Wells_Fargo": 0.010041257842073648,
+    "JPMorgan_Chase__Key_Bank": 0.005807438075862294,
+    "Wells_Fargo__Key_Bank": 0.001852854124939863
+  },
+  "fedavg_client_update_l2": {
+    "JPMorgan_Chase": {
+      "mean": 1.2938410867431918,
+      "std": 0.5583917314612039,
+      "max": 2.750007474094273
+    },
+    "Wells_Fargo": {
+      "mean": 0.8813405727897464,
+      "std": 0.4303657099207476,
+      "max": 2.1455938111157025
+    },
+    "Key_Bank": {
+      "mean": 0.7367406361107012,
+      "std": 0.31087584658386186,
+      "max": 1.6649010659635066
+    }
+  }
+}
