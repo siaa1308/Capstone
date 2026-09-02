@@ -17,7 +17,9 @@ The first test uses one Kafka broker because this is a four-computer capstone si
 | Central member | `CentralServer(Broker)` |
 | Central ZeroTier IP | `10.170.231.39` |
 | Central ZeroTier interface | `ztyewypcw7` |
-| Confirmed bank member | `KeyBank` (`10.170.231.168`) |
+| Bank 1 | `KeyBank` (`10.170.231.168`) |
+| Bank 2 | `FifthThirdBancorp` (`10.170.231.115`) |
+| Bank 3 | `JPMorganChase` (`10.170.231.174`) |
 | Kafka broker | `10.170.231.39:9092` |
 
 The 16-character network ID is used to join the network and is not a password.
@@ -90,8 +92,8 @@ Record the managed ZeroTier addresses in a private team note:
 |---|---|---|
 | Central | `CentralServer(Broker)` | `10.170.231.39` |
 | Bank 1 | `KeyBank` | `10.170.231.168` |
-| Bank 2 | Assign after authorization | Record after authorization |
-| Bank 3 | Assign after authorization | Record after authorization |
+| Bank 2 | `FifthThirdBancorp` | `10.170.231.115` |
+| Bank 3 | `JPMorganChase` | `10.170.231.174` |
 
 Test from every bank VM:
 
@@ -264,13 +266,13 @@ The host-side port is bound specifically to the ZeroTier IP. This is important b
 
 ## 6. Create the federation topics
 
+The runnable pipeline currently uses exactly two topics. Round metadata travels
+inside the signed model envelopes, so separate control and metrics topics are
+not required by the current implementation.
+
 Run on the central VM:
 
 ```bash
-sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
-  --bootstrap-server fcl-kafka:19092 --create --if-not-exists \
-  --topic fcl.control --partitions 1 --replication-factor 1
-
 sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
   --bootstrap-server fcl-kafka:19092 --create --if-not-exists \
   --topic fcl.global-model --partitions 1 --replication-factor 1 \
@@ -281,10 +283,6 @@ sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
   --topic fcl.client-updates --partitions 3 --replication-factor 1 \
   --config retention.ms=86400000
 
-sudo docker exec fcl-kafka /opt/kafka/bin/kafka-topics.sh \
-  --bootstrap-server fcl-kafka:19092 --create --if-not-exists \
-  --topic fcl.metrics --partitions 3 --replication-factor 1 \
-  --config retention.ms=604800000
 ```
 
 List topics:
@@ -327,7 +325,7 @@ from confluent_kafka.admin import AdminClient
 
 broker = "10.170.231.39:9092"
 metadata = AdminClient({"bootstrap.servers": broker}).list_topics(timeout=10)
-expected = {"fcl.control", "fcl.global-model", "fcl.client-updates", "fcl.metrics"}
+expected = {"fcl.global-model", "fcl.client-updates"}
 missing = expected - set(metadata.topics)
 assert not missing, f"Missing topics: {sorted(missing)}"
 print("KAFKA_METADATA_TEST_OK", sorted(expected))

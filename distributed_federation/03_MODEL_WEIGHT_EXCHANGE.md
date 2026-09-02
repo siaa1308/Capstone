@@ -1,18 +1,20 @@
 # Federated Model-Weight Exchange Workflow
 
-This document defines the planned protocol. It does not modify the current training scripts. Implementation should begin only after all VMs pass the network and Kafka checks in the previous guides.
+This document describes the protocol implemented by `central/aggregator.py`,
+`client/bank_worker.py`, and the modules under `common/`. Do not run it until all
+VMs pass the network, Kafka, secret, dependency, protocol, and model checks in
+the preflight tool.
 
 ## 1. Roles
 
 ### Central aggregator
 
 - Owns the authoritative global model.
-- Starts each federated round.
-- Publishes the current global weights.
+- Starts each federated round by publishing the current global weights.
 - Receives exactly one valid update from each participating bank.
 - Validates update metadata and tensor structure.
 - Computes sample-weighted FedAvg.
-- Publishes the next global model and round metrics.
+- Saves the aggregated global weights and a JSON audit manifest after each round.
 
 ### Bank client
 
@@ -28,7 +30,16 @@ The current dataset contains five simulated banks, while the physical test layou
 
 ### Mode A - three-client demonstration
 
-Select exactly three named bank partitions. Run one logical bank worker on each bank VM. This is the simplest first distributed test, but its FedAvg output must not be presented as equivalent to the existing five-client experiment.
+The confirmed demonstration uses one logical worker per bank VM:
+
+| Client ID | ZeroTier member | ZeroTier IP | Dataset key |
+|---|---|---|---|
+| `bank-1` | `KeyBank` | `10.170.231.168` | `Key_Bank` |
+| `bank-2` | `FifthThirdBancorp` | `10.170.231.115` | `Fifth_Third_Bancorp` |
+| `bank-3` | `JPMorganChase` | `10.170.231.174` | `JPMorgan_Chase` |
+
+This is the configured classroom run. Its FedAvg output must not be presented
+as equivalent to the existing five-client experiment.
 
 ### Mode B - five-client reproduction
 
@@ -49,41 +60,36 @@ Use the shared feature schema already fitted by `federated_causal_temporal_graph
 
 Every client must load the same model class, ordered feature schema, parameter names, tensor shapes, and starting global checkpoint.
 
-## 4. Kafka topics
+## 4. Kafka topics used by the implementation
 
 | Topic | Producer | Consumer | Key | Purpose |
 |---|---|---|---|---|
-| `fcl.control` | Central | Banks | `run_id` | Start, cancel, and finish rounds |
 | `fcl.global-model` | Central | Banks | `run_id` | Latest global model for a run |
 | `fcl.client-updates` | Banks | Central | `client_id` | Local model updates |
-| `fcl.metrics` | All nodes | Central/dashboard | `client_id` | Training and evaluation metrics |
 
-Use one consumer group per bank for `fcl.control` and `fcl.global-model`. Banks must not share one consumer group for global-model delivery, because each bank needs its own copy.
+Each bank uses its own consumer group for `fcl.global-model`, so every bank gets
+its own copy. The central aggregator has one run-specific consumer group for
+`fcl.client-updates`. The signed envelopes carry round and training metadata;
+there is currently no separate control or metrics topic.
 
 ## 5. Round protocol
 
 ```text
 Central                                      Bank 1 / Bank 2 / Bank 3
    |                                                     |
-   |-- control: START round 1 -------------------------->|
    |-- global-model: round 1 weights ------------------->|
    |                                                     | verify and train locally
    |<---------------- client-updates: round 1 -----------|
    | validate all three updates                          |
    | sample-weighted FedAvg                              |
    | save global checkpoint for round 2                  |
-   |-- control: START round 2 -------------------------->|
    |-- global-model: round 2 weights ------------------->|
 ```
 
-Central-state transitions:
-
-```text
-PREPARING -> DISTRIBUTING -> WAITING_FOR_CLIENTS -> AGGREGATING
-          -> VALIDATING -> COMPLETED
-```
-
-If a client fails, the central process should time out and mark the round failed. Do not silently reuse that client's update from an earlier round.
+If a client fails, the central process times out and exits without aggregating an
+incomplete round. It does not reuse an earlier update. To retry, stop every
+remaining process, choose a fresh `run_id`, rerun preflight, start all workers,
+and then start the aggregator. See `04_RESTART_AND_RECOVERY.md`.
 
 ## 6. Message envelope
 
@@ -164,7 +170,7 @@ for name, tensor in received_state.items():
 model.load_state_dict(received_state, strict=True)
 ```
 
-Install planned transport dependencies inside each VM's virtual environment:
+Install the transport dependencies inside each VM's virtual environment:
 
 ```bash
 python -m pip install -r distributed_federation/requirements-distributed.txt
@@ -257,10 +263,11 @@ The current repository's federated simulation weights each bank by its number of
 2. Confirm Kafka is healthy and topics exist.
 3. Record the Git commit and environment-lock files.
 4. Choose a unique `run_id`.
-5. Publish round 1 only after all banks report ready.
+5. Confirm all bank workers are waiting, then start the aggregator.
 6. Monitor received updates by client ID.
-7. Save immutable checkpoints as `global_round_000.pt`, `global_round_001.pt`, and so on.
-8. Publish final metrics and a completion event.
+7. Verify the `.safetensors` checkpoint and JSON manifest saved for every round
+   as `global_round_001.*`, `global_round_002.*`, and so on.
+8. Preserve the final console log and run artifacts for the experiment record.
 
 ### Each bank operator
 
@@ -275,8 +282,10 @@ The current repository's federated simulation weights each bank by its number of
 
 Do not begin with expensive training.
 
-1. **Connectivity test:** publish and consume a small text message.
-2. **Dummy tensor test:** exchange a tiny `safetensors` payload and verify its hash.
+1. **Connectivity test:** pass preflight's TCP and Kafka metadata checks.
+2. **Tracked-weight transfer test:** send
+   `artifacts/federated_causal_temporal_graphsage/global_model.pt` with
+   `tools.weight_smoke_test` and verify the same SHA-256 on all three banks.
 3. **One-client dry run:** central plus one bank, one local batch, one round.
 4. **Three-client dry run:** all banks, one local batch, one round.
 5. **Aggregation equivalence:** compare distributed FedAvg with the existing same-machine simulation using the same initial state and client updates.
@@ -324,6 +333,7 @@ distributed_federation/
 ├── 01_VM_SETUP.md
 ├── 02_ZEROTIER_KAFKA_SETUP.md
 ├── 03_MODEL_WEIGHT_EXCHANGE.md
+├── 04_RESTART_AND_RECOVERY.md
 ├── README.md
 ├── config.example.json
 ├── .env.example
