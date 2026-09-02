@@ -1,0 +1,141 @@
+[
+  {
+    "round": 1,
+    "duration_seconds": 22.49777830002131,
+    "client_weights": {
+      "JPMorgan_Chase": 126423,
+      "Wells_Fargo": 50346,
+      "Citi": 37316,
+      "Fifth_Third_Bancorp": 34765,
+      "Key_Bank": 22412
+    },
+    "client_training": {
+      "JPMorgan_Chase": {
+        "training_transactions": 126423,
+        "optimizer_updates": 55,
+        "skipped_no_positive_batches": 192,
+        "mean_training_loss": 0.23640313121405515
+      },
+      "Wells_Fargo": {
+        "training_transactions": 50346,
+        "optimizer_updates": 52,
+        "skipped_no_positive_batches": 47,
+        "mean_training_loss": 0.24953805397336298
+      },
+      "Citi": {
+        "training_transactions": 37316,
+        "optimizer_updates": 43,
+        "skipped_no_positive_batches": 30,
+        "mean_training_loss": 0.2801061255294223
+      },
+      "Fifth_Third_Bancorp": {
+        "training_transactions": 34765,
+        "optimizer_updates": 40,
+        "skipped_no_positive_batches": 28,
+        "mean_training_loss": 0.2887027870863676
+      },
+      "Key_Bank": {
+        "training_transactions": 22412,
+        "optimizer_updates": 36,
+        "skipped_no_positive_batches": 8,
+        "mean_training_loss": 0.28606920544472003
+      }
+    },
+    "validation_per_bank": [
+      {
+        "bank": "JPMorgan_Chase",
+        "examples": 64487,
+        "positives": 16,
+        "threshold": 0.07188867360353426,
+        "pr_auc": 0.07261747907029818,
+        "roc_auc": 0.7498497386421803,
+        "precision": 0.031007751937984496,
+        "recall": 0.25,
+        "f1": 0.05517241379310345
+      },
+      {
+        "bank": "Wells_Fargo",
+        "examples": 25592,
+        "positives": 22,
+        "threshold": 0.06446903619170151,
+        "pr_auc": 0.026889501554081305,
+        "roc_auc": 0.4818492907171046,
+        "precision": 0.02912621359223301,
+        "recall": 0.13636363636363635,
+        "f1": 0.048
+      },
+      {
+        "bank": "Citi",
+        "examples": 18836,
+        "positives": 30,
+        "threshold": 0.0632173002511263,
+        "pr_auc": 0.021204337979301015,
+        "roc_auc": 0.6431014924314935,
+        "precision": 0.06140350877192982,
+        "recall": 0.23333333333333334,
+        "f1": 0.09722222222222222
+      },
+      {
+        "bank": "Fifth_Third_Bancorp",
+        "examples": 17789,
+        "positives": 36,
+        "threshold": 0.05041521322727186,
+        "pr_auc": 0.005302064659227477,
+        "roc_auc": 0.32690014833173736,
+        "precision": 0.02336448598130841,
+        "recall": 0.1388888888888889,
+        "f1": 0.04
+      },
+      {
+        "bank": "Key_Bank",
+        "examples": 11418,
+        "positives": 21,
+        "threshold": 0.05070249871909623,
+        "pr_auc": 0.021838338875130914,
+        "roc_auc": 0.6256575456364875,
+        "precision": 0.03398058252427184,
+        "recall": 0.3333333333333333,
+        "f1": 0.06167400881057269
+      }
+    ],
+    "validation_aggregate": {
+      "example_count": 138122,
+      "pr_auc": {
+        "macro": 0.02957034442760778,
+        "weighted": 0.04426603284238372,
+        "minimum": 0.005302064659227477,
+        "maximum": 0.07261747907029818,
+        "client_std": 0.022711081419128743
+      },
+      "roc_auc": {
+        "macro": 0.5654716431518007,
+        "weighted": 0.6208966815571793,
+        "minimum": 0.32690014833173736,
+        "maximum": 0.7498497386421803,
+        "client_std": 0.1466649749743514
+      },
+      "precision": {
+        "macro": 0.03577650856154552,
+        "weighted": 0.034065627351826167,
+        "minimum": 0.02336448598130841,
+        "maximum": 0.06140350877192982,
+        "client_std": 0.013273991544070916
+      },
+      "recall": {
+        "macro": 0.21838383838383835,
+        "weighted": 0.21925058493888946,
+        "minimum": 0.13636363636363635,
+        "maximum": 0.3333333333333333,
+        "client_std": 0.0741393498735557
+      },
+      "f1": {
+        "macro": 0.06041372896517967,
+        "weighted": 0.058161270895677436,
+        "minimum": 0.04,
+        "maximum": 0.09722222222222222,
+        "client_std": 0.019772434665261854
+      }
+    },
+    "selected_as_best": true
+  }
+]
