@@ -1,0 +1,295 @@
+{
+  "method": "fedprox",
+  "prox_mu": 0.0001,
+  "best_round": 5,
+  "best_macro_validation_pr_auc": 0.09903194772449757,
+  "rounds": [
+    {
+      "round": 1,
+      "client_sample_counts": {
+        "JPMorgan_Chase": 126423,
+        "Wells_Fargo": 50346,
+        "Key_Bank": 22412
+      },
+      "client_weights": {
+        "JPMorgan_Chase": 126423.0,
+        "Wells_Fargo": 50346.0,
+        "Key_Bank": 22412.0
+      },
+      "client_update_l2": {
+        "JPMorgan_Chase": 2.4116853260892737,
+        "Wells_Fargo": 2.2262439299110732,
+        "Key_Bank": 1.6810551776846545
+      },
+      "macro_validation_pr_auc": 0.05353140556214659,
+      "validation_pr_auc_by_bank": {
+        "JPMorgan_Chase": 0.08774676067014256,
+        "Wells_Fargo": 0.020509654949901278,
+        "Key_Bank": 0.05233780106639594
+      }
+    },
+    {
+      "round": 2,
+      "client_sample_counts": {
+        "JPMorgan_Chase": 126423,
+        "Wells_Fargo": 50346,
+        "Key_Bank": 22412
+      },
+      "client_weights": {
+        "JPMorgan_Chase": 126423.0,
+        "Wells_Fargo": 50346.0,
+        "Key_Bank": 22412.0
+      },
+      "client_update_l2": {
+        "JPMorgan_Chase": 1.7372324003082287,
+        "Wells_Fargo": 0.9506180261408623,
+        "Key_Bank": 0.5945899428842025
+      },
+      "macro_validation_pr_auc": 0.07548973263060202,
+      "validation_pr_auc_by_bank": {
+        "JPMorgan_Chase": 0.04901248611779475,
+        "Wells_Fargo": 0.012403071021284762,
+        "Key_Bank": 0.16505364075272655
+      }
+    },
+    {
+      "round": 3,
+      "client_sample_counts": {
+        "JPMorgan_Chase": 126423,
+        "Wells_Fargo": 50346,
+        "Key_Bank": 22412
+      },
+      "client_weights": {
+        "JPMorgan_Chase": 126423.0,
+        "Wells_Fargo": 50346.0,
+        "Key_Bank": 22412.0
+      },
+      "client_update_l2": {
+        "JPMorgan_Chase": 1.808229769778967,
+        "Wells_Fargo": 0.9002616860066439,
+        "Key_Bank": 0.6392426685304505
+      },
+      "macro_validation_pr_auc": 0.07201864825147432,
+      "validation_pr_auc_by_bank": {
+        "JPMorgan_Chase": 0.022977239458139682,
+        "Wells_Fargo": 0.012831950908736074,
+        "Key_Bank": 0.1802467543875472
+      }
+    },
+    {
+      "round": 4,
+      "client_sample_counts": {
+        "JPMorgan_Chase": 126423,
+        "Wells_Fargo": 50346,
+        "Key_Bank": 22412
+      },
+      "client_weights": {
+        "JPMorgan_Chase": 126423.0,
+        "Wells_Fargo": 50346.0,
+        "Key_Bank": 22412.0
+      },
+      "client_update_l2": {
+        "JPMorgan_Chase": 1.6208796682331075,
+        "Wells_Fargo": 0.9359240091161949,
+        "Key_Bank": 0.6318099101773218
+      },
+      "macro_validation_pr_auc": 0.07973557013521088,
+      "validation_pr_auc_by_bank": {
+        "JPMorgan_Chase": 0.024794413220766368,
+        "Wells_Fargo": 0.013785991173276183,
+        "Key_Bank": 0.20062630601159007
+      }
+    },
+    {
+      "round": 5,
+      "client_sample_counts": {
+        "JPMorgan_Chase": 126423,
+        "Wells_Fargo": 50346,
+        "Key_Bank": 22412
+      },
+      "client_weights": {
+        "JPMorgan_Chase": 126423.0,
+        "Wells_Fargo": 50346.0,
+        "Key_Bank": 22412.0
+      },
+      "client_update_l2": {
+        "JPMorgan_Chase": 1.438057556956926,
+        "Wells_Fargo": 0.8241408623446851,
+        "Key_Bank": 0.6116353290385682
+      },
+      "macro_validation_pr_auc": 0.09903194772449757,
+      "validation_pr_auc_by_bank": {
+        "JPMorgan_Chase": 0.03017241652681742,
+        "Wells_Fargo": 0.01272147069797579,
+        "Key_Bank": 0.2542019559486995
+      }
+    },
+    {
+      "round": 6,
+      "client_sample_counts": {
+        "JPMorgan_Chase": 126423,
+        "Wells_Fargo": 50346,
+        "Key_Bank": 22412
+      },
+      "client_weights": {
+        "JPMorgan_Chase": 126423.0,
+        "Wells_Fargo": 50346.0,
+        "Key_Bank": 22412.0
+      },
+      "client_update_l2": {
+        "JPMorgan_Chase": 1.3337397819993857,
+        "Wells_Fargo": 0.7892813992690879,
+        "Key_Bank": 0.5663062985181804
+      },
+      "macro_validation_pr_auc": 0.08453370481304055,
+      "validation_pr_auc_by_bank": {
+        "JPMorgan_Chase": 0.028070007964016847,
+        "Wells_Fargo": 0.011332454190622338,
+        "Key_Bank": 0.21419865228448245
+      }
+    },
+    {
+      "round": 7,
+      "client_sample_counts": {
+        "JPMorgan_Chase": 126423,
+        "Wells_Fargo": 50346,
+        "Key_Bank": 22412
+      },
+      "client_weights": {
+        "JPMorgan_Chase": 126423.0,
+        "Wells_Fargo": 50346.0,
+        "Key_Bank": 22412.0
+      },
+      "client_update_l2": {
+        "JPMorgan_Chase": 1.2840286063346216,
+        "Wells_Fargo": 0.6776306211868169,
+        "Key_Bank": 0.5187990259222967
+      },
+      "macro_validation_pr_auc": 0.07842466455911688,
+      "validation_pr_auc_by_bank": {
+        "JPMorgan_Chase": 0.025043797295628223,
+        "Wells_Fargo": 0.009942315515477623,
+        "Key_Bank": 0.20028788086624477
+      }
+    },
+    {
+      "round": 8,
+      "client_sample_counts": {
+        "JPMorgan_Chase": 126423,
+        "Wells_Fargo": 50346,
+        "Key_Bank": 22412
+      },
+      "client_weights": {
+        "JPMorgan_Chase": 126423.0,
+        "Wells_Fargo": 50346.0,
+        "Key_Bank": 22412.0
+      },
+      "client_update_l2": {
+        "JPMorgan_Chase": 1.3930480814304524,
+        "Wells_Fargo": 0.8230291998597016,
+        "Key_Bank": 0.4798486433563781
+      },
+      "macro_validation_pr_auc": 0.08418443384645147,
+      "validation_pr_auc_by_bank": {
+        "JPMorgan_Chase": 0.021949317258201744,
+        "Wells_Fargo": 0.010114047707006345,
+        "Key_Bank": 0.22048993657414628
+      }
+    }
+  ],
+  "per_bank": [
+    {
+      "bank": "JPMorgan_Chase",
+      "threshold": 0.2130906558036794,
+      "validation": {
+        "pr_auc": 0.03017241652681742,
+        "roc_auc": 0.9009835817654449,
+        "precision": 0.046511627906976744,
+        "recall": 0.375,
+        "f1": 0.08275862068965517
+      },
+      "validation_alert_metrics": {
+        "10": {
+          "alerts": 10,
+          "true_positives": 0,
+          "precision_at_k": 0.0,
+          "recall_at_k": 0.0
+        },
+        "25": {
+          "alerts": 25,
+          "true_positives": 0,
+          "precision_at_k": 0.0,
+          "recall_at_k": 0.0
+        },
+        "50": {
+          "alerts": 50,
+          "true_positives": 0,
+          "precision_at_k": 0.0,
+          "recall_at_k": 0.0
+        }
+      }
+    },
+    {
+      "bank": "Wells_Fargo",
+      "threshold": 0.5655433304309843,
+      "validation": {
+        "pr_auc": 0.01272147069797579,
+        "roc_auc": 0.8762363565257583,
+        "precision": 0.038461538461538464,
+        "recall": 0.09090909090909091,
+        "f1": 0.05405405405405406
+      },
+      "validation_alert_metrics": {
+        "10": {
+          "alerts": 10,
+          "true_positives": 0,
+          "precision_at_k": 0.0,
+          "recall_at_k": 0.0
+        },
+        "25": {
+          "alerts": 25,
+          "true_positives": 0,
+          "precision_at_k": 0.0,
+          "recall_at_k": 0.0
+        },
+        "50": {
+          "alerts": 50,
+          "true_positives": 2,
+          "precision_at_k": 0.04,
+          "recall_at_k": 0.09090909090909091
+        }
+      }
+    },
+    {
+      "bank": "Key_Bank",
+      "threshold": 0.5552827039957028,
+      "validation": {
+        "pr_auc": 0.2542019559486995,
+        "roc_auc": 0.9666662488457698,
+        "precision": 0.34782608695652173,
+        "recall": 0.38095238095238093,
+        "f1": 0.36363636363636365
+      },
+      "validation_alert_metrics": {
+        "10": {
+          "alerts": 10,
+          "true_positives": 2,
+          "precision_at_k": 0.2,
+          "recall_at_k": 0.09523809523809523
+        },
+        "25": {
+          "alerts": 25,
+          "true_positives": 8,
+          "precision_at_k": 0.32,
+          "recall_at_k": 0.38095238095238093
+        },
+        "50": {
+          "alerts": 50,
+          "true_positives": 9,
+          "precision_at_k": 0.18,
+          "recall_at_k": 0.42857142857142855
+        }
+      }
+    }
+  ]
+}

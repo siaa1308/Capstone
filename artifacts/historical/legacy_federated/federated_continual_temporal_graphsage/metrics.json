@@ -1,0 +1,177 @@
+{
+  "method": "federated continual Causal Temporal GraphSAGE",
+  "rounds": [
+    {
+      "round": 1,
+      "clients": [
+        {
+          "bank": "JPMorgan_Chase",
+          "current_events": 66497,
+          "current_positives": 32,
+          "replay_events": 0,
+          "aggregation_weight": 66497
+        },
+        {
+          "bank": "Wells_Fargo",
+          "current_events": 26534,
+          "current_positives": 37,
+          "replay_events": 0,
+          "aggregation_weight": 26534
+        },
+        {
+          "bank": "Citi",
+          "current_events": 19630,
+          "current_positives": 34,
+          "replay_events": 0,
+          "aggregation_weight": 19630
+        },
+        {
+          "bank": "Fifth_Third_Bancorp",
+          "current_events": 18234,
+          "current_positives": 32,
+          "replay_events": 0,
+          "aggregation_weight": 18234
+        },
+        {
+          "bank": "Key_Bank",
+          "current_events": 11767,
+          "current_positives": 44,
+          "replay_events": 0,
+          "aggregation_weight": 11767
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "clients": [
+        {
+          "bank": "JPMorgan_Chase",
+          "current_events": 59926,
+          "current_positives": 33,
+          "replay_events": 2000,
+          "aggregation_weight": 61926
+        },
+        {
+          "bank": "Wells_Fargo",
+          "current_events": 23812,
+          "current_positives": 43,
+          "replay_events": 2000,
+          "aggregation_weight": 25812
+        },
+        {
+          "bank": "Citi",
+          "current_events": 17686,
+          "current_positives": 47,
+          "replay_events": 2000,
+          "aggregation_weight": 19686
+        },
+        {
+          "bank": "Fifth_Third_Bancorp",
+          "current_events": 16531,
+          "current_positives": 49,
+          "replay_events": 2000,
+          "aggregation_weight": 18531
+        },
+        {
+          "bank": "Key_Bank",
+          "current_events": 10645,
+          "current_positives": 56,
+          "replay_events": 2000,
+          "aggregation_weight": 12645
+        }
+      ]
+    }
+  ],
+  "per_bank": [
+    {
+      "bank": "JPMorgan_Chase",
+      "threshold": 0.08146467775106381,
+      "validation": {
+        "pr_auc": 0.09873317879628046,
+        "roc_auc": 0.7647459710567542,
+        "precision": 0.046511627906976744,
+        "recall": 0.375,
+        "f1": 0.08275862068965517
+      },
+      "testing": {
+        "pr_auc": 0.0043374476597348366,
+        "roc_auc": 0.5194608311636951,
+        "precision": 0.010416666666666666,
+        "recall": 0.05263157894736842,
+        "f1": 0.017391304347826087
+      }
+    },
+    {
+      "bank": "Wells_Fargo",
+      "threshold": 0.09167852155864235,
+      "validation": {
+        "pr_auc": 0.02770842329430888,
+        "roc_auc": 0.4383332740782878,
+        "precision": 0.038461538461538464,
+        "recall": 0.09090909090909091,
+        "f1": 0.05405405405405406
+      },
+      "testing": {
+        "pr_auc": 0.06389032240501857,
+        "roc_auc": 0.41502522721197543,
+        "precision": 0.08333333333333333,
+        "recall": 0.08333333333333333,
+        "f1": 0.08333333333333333
+      }
+    },
+    {
+      "bank": "Citi",
+      "threshold": 0.07165235370397567,
+      "validation": {
+        "pr_auc": 0.06482977777553044,
+        "roc_auc": 0.6283686057641178,
+        "precision": 0.06622516556291391,
+        "recall": 0.3333333333333333,
+        "f1": 0.11049723756906077
+      },
+      "testing": {
+        "pr_auc": 0.005064943913712439,
+        "roc_auc": 0.33892740545101063,
+        "precision": 0.007751937984496124,
+        "recall": 0.05555555555555555,
+        "f1": 0.013605442176870748
+      }
+    },
+    {
+      "bank": "Fifth_Third_Bancorp",
+      "threshold": 0.06906417483091355,
+      "validation": {
+        "pr_auc": 0.008258935012123825,
+        "roc_auc": 0.37044756128854595,
+        "precision": 0.037383177570093455,
+        "recall": 0.1111111111111111,
+        "f1": 0.055944055944055944
+      },
+      "testing": {
+        "pr_auc": 0.028802304330289772,
+        "roc_auc": 0.4216075030794223,
+        "precision": 0.02197802197802198,
+        "recall": 0.07692307692307693,
+        "f1": 0.03418803418803419
+      }
+    },
+    {
+      "bank": "Key_Bank",
+      "threshold": 0.06858594894409178,
+      "validation": {
+        "pr_auc": 0.042934888453846555,
+        "roc_auc": 0.6227536904030718,
+        "precision": 0.06086956521739131,
+        "recall": 0.3333333333333333,
+        "f1": 0.10294117647058823
+      },
+      "testing": {
+        "pr_auc": 0.12613494330564645,
+        "roc_auc": 0.5362483929799384,
+        "precision": 0.09375,
+        "recall": 0.26666666666666666,
+        "f1": 0.13872832369942195
+      }
+    }
+  ]
+}

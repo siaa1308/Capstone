@@ -1,0 +1,177 @@
+{
+  "matched_banks": {
+    "Citi": "Citi",
+    "Fifth Third Bancorp": "Fifth Third Bancorp",
+    "JPMorgan Chase": "JPMorgan Chase",
+    "Key Bank": "Key Bank",
+    "Wells Fargo": "Wells Fargo"
+  },
+  "selected_rows": 543298,
+  "split_bank_counts": [
+    {
+      "bank": "JPMorgan_Chase",
+      "edges": 126423,
+      "fraud_rate": 0.00051414695110858,
+      "nodes": 24906,
+      "positive_labels": 65,
+      "rows": 126423,
+      "split": "training",
+      "timestamp_max": "2025-07-31 23:59:35",
+      "timestamp_min": "2025-06-01 00:00:24.500000"
+    },
+    {
+      "bank": "Wells_Fargo",
+      "edges": 50346,
+      "fraud_rate": 0.001589004091685536,
+      "nodes": 11292,
+      "positive_labels": 80,
+      "rows": 50346,
+      "split": "training",
+      "timestamp_max": "2025-07-31 23:58:45.200000",
+      "timestamp_min": "2025-06-01 00:00:14.900000"
+    },
+    {
+      "bank": "Citi",
+      "edges": 37316,
+      "fraud_rate": 0.002170650659234645,
+      "nodes": 8742,
+      "positive_labels": 81,
+      "rows": 37316,
+      "split": "training",
+      "timestamp_max": "2025-07-31 23:59:41.400000",
+      "timestamp_min": "2025-06-01 00:02:12.200000"
+    },
+    {
+      "bank": "Fifth_Third_Bancorp",
+      "edges": 34765,
+      "fraud_rate": 0.0023299295268229543,
+      "nodes": 7914,
+      "positive_labels": 81,
+      "rows": 34765,
+      "split": "training",
+      "timestamp_max": "2025-07-31 23:59:41.700000",
+      "timestamp_min": "2025-06-01 00:04:44.500000"
+    },
+    {
+      "bank": "Key_Bank",
+      "edges": 22412,
+      "fraud_rate": 0.004461895413171516,
+      "nodes": 5314,
+      "positive_labels": 100,
+      "rows": 22412,
+      "split": "training",
+      "timestamp_max": "2025-07-31 23:58:45.800000",
+      "timestamp_min": "2025-06-01 00:03:00.300000"
+    },
+    {
+      "bank": "JPMorgan_Chase",
+      "edges": 64487,
+      "fraud_rate": 0.0002481120225781941,
+      "nodes": 22600,
+      "positive_labels": 16,
+      "rows": 64487,
+      "split": "validation",
+      "timestamp_max": "2025-08-31 23:59:50.800000",
+      "timestamp_min": "2025-08-01 00:00:08.700000"
+    },
+    {
+      "bank": "Wells_Fargo",
+      "edges": 25592,
+      "fraud_rate": 0.0008596436386370741,
+      "nodes": 10218,
+      "positive_labels": 22,
+      "rows": 25592,
+      "split": "validation",
+      "timestamp_max": "2025-08-31 23:59:33.700000",
+      "timestamp_min": "2025-08-01 00:03:20.100000"
+    },
+    {
+      "bank": "Citi",
+      "edges": 18836,
+      "fraud_rate": 0.0015926948396687195,
+      "nodes": 7825,
+      "positive_labels": 30,
+      "rows": 18836,
+      "split": "validation",
+      "timestamp_max": "2025-08-31 23:59:59.400000",
+      "timestamp_min": "2025-08-01 00:00:09"
+    },
+    {
+      "bank": "Fifth_Third_Bancorp",
+      "edges": 17789,
+      "fraud_rate": 0.0020237225251559954,
+      "nodes": 6989,
+      "positive_labels": 36,
+      "rows": 17789,
+      "split": "validation",
+      "timestamp_max": "2025-08-31 23:59:30.300000",
+      "timestamp_min": "2025-08-01 00:00:13.100000"
+    },
+    {
+      "bank": "Key_Bank",
+      "edges": 11418,
+      "fraud_rate": 0.0018392012611665792,
+      "nodes": 4756,
+      "positive_labels": 21,
+      "rows": 11418,
+      "split": "validation",
+      "timestamp_max": "2025-08-31 23:59:59",
+      "timestamp_min": "2025-08-01 00:01:44.200000"
+    },
+    {
+      "bank": "JPMorgan_Chase",
+      "edges": 62302,
+      "fraud_rate": 0.00030496613270842026,
+      "nodes": 23124,
+      "positive_labels": 19,
+      "rows": 62302,
+      "split": "testing",
+      "timestamp_max": "2025-09-30 23:59:45.500000",
+      "timestamp_min": "2025-09-01 00:00:03.400000"
+    },
+    {
+      "bank": "Wells_Fargo",
+      "edges": 24964,
+      "fraud_rate": 0.0009613843935266784,
+      "nodes": 10460,
+      "positive_labels": 24,
+      "rows": 24964,
+      "split": "testing",
+      "timestamp_max": "2025-09-30 23:59:45.300000",
+      "timestamp_min": "2025-09-01 00:02:18.900000"
+    },
+    {
+      "bank": "Citi",
+      "edges": 18192,
+      "fraud_rate": 0.0009894459102902375,
+      "nodes": 7976,
+      "positive_labels": 18,
+      "rows": 18192,
+      "split": "testing",
+      "timestamp_max": "2025-09-30 23:58:53.500000",
+      "timestamp_min": "2025-09-01 00:00:03"
+    },
+    {
+      "bank": "Fifth_Third_Bancorp",
+      "edges": 17262,
+      "fraud_rate": 0.0015061985864905573,
+      "nodes": 7266,
+      "positive_labels": 26,
+      "rows": 17262,
+      "split": "testing",
+      "timestamp_max": "2025-09-30 23:59:32.400000",
+      "timestamp_min": "2025-09-01 00:06:00.400000"
+    },
+    {
+      "bank": "Key_Bank",
+      "edges": 11194,
+      "fraud_rate": 0.004020010720028586,
+      "nodes": 4868,
+      "positive_labels": 45,
+      "rows": 11194,
+      "split": "testing",
+      "timestamp_max": "2025-09-30 23:57:48",
+      "timestamp_min": "2025-09-01 00:01:56.200000"
+    }
+  ]
+}

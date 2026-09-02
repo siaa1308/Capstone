@@ -1,0 +1,28 @@
+{
+  "method": "corrected FedAvg with bank-local continual learning and replay",
+  "seeds": [42, 52, 62],
+  "validation_pr_auc": {"mean": 0.7083472318177293, "sample_sd": 0.09373873935461736},
+  "september": {
+    "pr_auc": {"mean": 0.7590214814426095, "sample_sd": 0.0359797134206056},
+    "recall_at_10": {"mean": 0.36744639376218324, "sample_sd": 0.025241359675594835},
+    "precision_at_10": {"mean": 0.9555555555555556, "sample_sd": 0.05091750772173154},
+    "recall_at_25": {"mean": 0.672059779077323, "sample_sd": 0.03314973480857927},
+    "precision_at_25": {"mean": 0.7155555555555556, "sample_sd": 0.027755546659548446},
+    "recall_at_50": {"mean": 0.7966861598440546, "sample_sd": 0.010759721856900946},
+    "precision_at_50": {"mean": 0.4266666666666667, "sample_sd": 0.013333333333333336},
+    "recall": {"mean": 0.7243827160493828, "sample_sd": 0.05689988721488203},
+    "precision": {"mean": 0.6062158520491854, "sample_sd": 0.03705743517051093},
+    "f1": {"mean": 0.5506468336785497, "sample_sd": 0.014585578641542824},
+    "roc_auc": {"mean": 0.984058004479706, "sample_sd": 0.009103457242282563},
+    "per_bank_pr_auc": {
+      "JPMorgan_Chase": {"mean": 0.8414216234292011, "sample_sd": 0.09582685552142224},
+      "Wells_Fargo": {"mean": 0.8272089321689747, "sample_sd": 0.0551805647411928},
+      "Key_Bank": {"mean": 0.6084338887296526, "sample_sd": 0.027924766435314153}
+    }
+  },
+  "pr_auc_improvements": {
+    "over_local": {"absolute": 0.3175151966643876, "relative_percent": 71.91634810450826},
+    "over_cl": {"absolute": 0.1775670501581108, "relative_percent": 30.538429256759652},
+    "over_original_fedavg": {"absolute": 0.5306212506807835, "relative_percent": 232.32080322813303}
+  }
+}
