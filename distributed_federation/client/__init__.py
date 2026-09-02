@@ -1,0 +1,1 @@
+"""Bank worker service."""
