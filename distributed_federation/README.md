@@ -1,6 +1,8 @@
 # Plug-and-play model-weight federation
 
-> **Start with [`QUICKSTART.md`](QUICKSTART.md).** It is the short, checklist-driven setup and uses the automated preflight instead of `nc`. The numbered documents remain detailed reference material.
+> **Start with [`QUICKSTART.md`](QUICKSTART.md).** Send
+> [`TEAMMATE_WEIGHT_STREAMING.md`](TEAMMATE_WEIGHT_STREAMING.md) to each bank
+> teammate. The numbered documents remain detailed reference material.
 
 This folder runs the repository's existing `CausalTemporalGraphSAGE` model across one central VM and three bank VMs. Raw rows stay inside each worker process; Kafka carries only signed, chunked `safetensors` model states and small metadata records.
 

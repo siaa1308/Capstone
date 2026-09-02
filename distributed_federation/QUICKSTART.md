@@ -1,5 +1,8 @@
 # Simple four-computer setup
 
+For the shorter teammate-only handoff, use
+[`TEAMMATE_WEIGHT_STREAMING.md`](TEAMMATE_WEIGHT_STREAMING.md).
+
 Use this page first. It tells you how to check whether each step is already complete and what to do only when it is missing.
 
 ## The one-minute picture
