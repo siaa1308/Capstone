@@ -117,7 +117,9 @@ sudo docker compose up -d
 sudo docker compose ps
 ```
 
-Ready means `fcl-kafka` becomes `healthy`. The `kafka-init` container should finish successfully; it automatically creates both topics.
+Ready means `fcl-kafka` becomes `healthy`. The one-time `kafka-volume-init` and
+`kafka-init` containers should finish successfully; the first prepares storage
+permissions and the second automatically creates both topics.
 
 Verify the topics:
 

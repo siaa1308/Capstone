@@ -1,9 +1,20 @@
 services:
+  kafka-volume-init:
+    image: apache/kafka:4.3.1
+    user: "0:0"
+    entrypoint: ["/bin/bash", "-c"]
+    command: "chown -R 1000:1000 /tmp/kraft-combined-logs"
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
+
   kafka:
     image: apache/kafka:4.3.1
     container_name: fcl-kafka
     hostname: fcl-kafka
     restart: unless-stopped
+    depends_on:
+      kafka-volume-init:
+        condition: service_completed_successfully
     ports:
       - "${CENTRAL_ZT_IP}:9092:9092"
     environment:
