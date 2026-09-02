@@ -2,8 +2,7 @@ services:
   kafka-volume-init:
     image: apache/kafka:4.3.1
     user: "0:0"
-    entrypoint: ["/bin/bash", "-c"]
-    command: "chown -R 1000:1000 /tmp/kraft-combined-logs"
+    entrypoint: ["/bin/chown", "-R", "1000:1000", "/tmp/kraft-combined-logs"]
     volumes:
       - kafka_data:/tmp/kraft-combined-logs
 
