@@ -1,0 +1,15 @@
+{
+  "selection_metric": "macro validation PR-AUC with communication-round early stopping",
+  "active_banks": ["JPMorgan_Chase", "Wells_Fargo", "Key_Bank"],
+  "seeds": [42, 52, 62],
+  "hidden_channels": 32,
+  "dropout": 0.25,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "negative_ratio": 20,
+  "batch_size": 1024,
+  "max_rounds": 12,
+  "round_patience": 3,
+  "local_epochs": 2,
+  "client_weighting": "training sample count"
+}

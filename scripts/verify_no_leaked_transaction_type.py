@@ -23,9 +23,9 @@ from pathlib import Path
 
 FORBIDDEN_FEATURE = "transaction_type_model_safe"
 TRAINING_SCRIPTS = [
-    "run_xgboost_baseline.py",
-    "run_xgboost_enhanced.py",
-    "run_xgboost_tuned.py",
+    "historical/run_xgboost_baseline.py",
+    "historical/run_xgboost_enhanced.py",
+    "historical/run_xgboost_tuned.py",
 ]
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -124,7 +124,7 @@ def parse_args() -> argparse.Namespace:
         "--scripts-dir",
         type=Path,
         default=SCRIPT_DIR,
-        help="Directory containing the run_xgboost_*.py training scripts.",
+        help="Repository scripts directory containing historical/run_xgboost_*.py.",
     )
     return parser.parse_args()
 

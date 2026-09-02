@@ -1,0 +1,35 @@
+{
+  "scope": "training and August validation only; September not loaded or scored",
+  "current_reference_validation_pr_auc": 0.252,
+  "best_configuration": {
+    "local_training": "continual_replay",
+    "hidden_channels": 128,
+    "tbptt_steps": 2,
+    "replay_size": 2000,
+    "local_epochs_per_task_per_round": 3,
+    "rounds": 16,
+    "client_weighting": "uniform",
+    "server_learning_rate": 1.0,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "dropout": 0.25,
+    "batch_size": 1024,
+    "negative_ratio": 20,
+    "seeds": [42, 52, 62]
+  },
+  "best_validation_pr_auc_by_seed": {
+    "42": 0.7722973421947842,
+    "52": 0.8058683672444223,
+    "62": 0.6284733238099297
+  },
+  "macro_validation_pr_auc_mean": 0.7355463444163788,
+  "macro_validation_pr_auc_sample_sd": 0.0942349576169197,
+  "absolute_improvement_over_reference": 0.4835463444163788,
+  "relative_improvement_percent": 191.88347000649952,
+  "per_bank_validation_pr_auc": {
+    "JPMorgan_Chase": {"mean": 0.6887436938217448, "sample_sd": 0.05092651466170126},
+    "Wells_Fargo": {"mean": 0.7951840467816429, "sample_sd": 0.19812599833769462},
+    "Key_Bank": {"mean": 0.7227112926457486, "sample_sd": 0.034384741184310466}
+  }
+}
