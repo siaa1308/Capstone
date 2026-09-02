@@ -4,15 +4,15 @@
   "clients": [
     {
       "client_id": "bank-1",
-      "bank": "JPMorgan_Chase"
+      "bank": "Key_Bank"
     },
     {
       "client_id": "bank-2",
-      "bank": "Wells_Fargo"
+      "bank": "Fifth_Third_Bancorp"
     },
     {
       "client_id": "bank-3",
-      "bank": "Citi"
+      "bank": "JPMorgan_Chase"
     }
   ],
   "schema_banks": [

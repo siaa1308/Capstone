@@ -1,5 +1,12 @@
 # Plug-and-play model-weight federation
 
+> **Start with [`QUICKSTART.md`](QUICKSTART.md).** Send
+> [`TEAMMATE_WEIGHT_STREAMING.md`](TEAMMATE_WEIGHT_STREAMING.md) to each bank
+> teammate. The central owner should use
+> [`CENTRAL_PRE_RUN_CHECKLIST.md`](CENTRAL_PRE_RUN_CHECKLIST.md) after every VM
+> restart and before every experiment. The numbered documents remain detailed
+> reference material.
+
 This folder runs the repository's existing `CausalTemporalGraphSAGE` model across one central VM and three bank VMs. Raw rows stay inside each worker process; Kafka carries only signed, chunked `safetensors` model states and small metadata records.
 
 Confirmed infrastructure for the classroom run:
@@ -8,9 +15,13 @@ Confirmed infrastructure for the classroom run:
 - Central member: `CentralServer(Broker)`
 - Central ZeroTier IP and Kafka broker: `10.170.231.39:9092`
 - Central ZeroTier interface: `ztyewypcw7`
-- Confirmed bank member: `KeyBank` at `10.170.231.168`
+- Bank 1: `KeyBank` at `10.170.231.168` (`Key_Bank` dataset)
+- Bank 2: `FifthThirdBancorp` at `10.170.231.115` (`Fifth_Third_Bancorp` dataset)
+- Bank 3: `JPMorganChase` at `10.170.231.174` (`JPMorgan_Chase` dataset)
 
-Read `01_VM_SETUP.md` and `02_ZEROTIER_KAFKA_SETUP.md` first. Run every command below from the repository root inside an Ubuntu VM.
+Read `01_VM_SETUP.md` and `02_ZEROTIER_KAFKA_SETUP.md` first. Use
+`04_RESTART_AND_RECOVERY.md` whenever the VMs or pipeline have been stopped or
+rebooted. Run every command below from the repository root inside an Ubuntu VM.
 
 ## 1. Install the Python runtime on every VM
 
@@ -41,7 +52,9 @@ python -m json.tool distributed_federation/config.json >/dev/null && echo "Confi
 ```
 
 The same client mapping, model settings, and `run_id` must be used on all four
-VMs. Use a new `run_id` for every attempt so Kafka cannot mix runs. The ZeroTier
+VMs. Use a new `run_id` for every attempt, including after a failed or interrupted
+attempt, so Kafka cannot mix runs. The current implementation restarts a run from
+round 1; it does not resume a partially completed Kafka round. The ZeroTier
 display name `KeyBank` does not automatically select the `Key_Bank` dataset;
 the assignment is controlled only by the `clients` entries in `config.json`.
 
@@ -105,32 +118,44 @@ python -m distributed_federation.tools.preflight \
 
 Do not start the experiment until all four preflights say `Preflight passed.`
 
+Before the first training run, use the tracked
+`artifacts/federated_causal_temporal_graphsage/global_model.pt` checkpoint for
+the no-training Kafka transfer test in `04_RESTART_AND_RECOVERY.md`. This proves
+that the real weight file can be signed, chunked, delivered to all three worker
+consumer groups, reconstructed, and hash-verified without model loading or
+local training.
+
 If the central VM was rebooted, first confirm ZeroTier shows `OK`, then restore
 the broker before running preflight:
 
 ```bash
-cd ~/fcl-kafka
+cd ~/Capstone/distributed_federation/kafka
 sudo docker compose up -d
 sudo docker compose ps
 ```
 
 ## 5. Run
 
-Start the central process first:
-
-```bash
-python -m distributed_federation.central.aggregator \
-  --config distributed_federation/config.json
-```
-
-Then run exactly one assigned worker per bank VM:
+Start one assigned bank worker on each bank VM first. They will wait for the
+first global model:
 
 ```bash
 python -m distributed_federation.client.bank_worker \
   --config distributed_federation/config.json --client-id bank-1
 ```
 
-Use `bank-2` and `bank-3` on the other two VMs. The central process waits for every configured client and stops the round on timeout; it never silently aggregates an incomplete round. With the example configuration, completed global models and JSON audit manifests appear under `artifacts/distributed_federation/demo-001/`.
+Use `bank-2` and `bank-3` on the other two VMs. After all three workers are
+waiting, start the central process:
+
+```bash
+python -m distributed_federation.central.aggregator \
+  --config distributed_federation/config.json
+```
+
+The central process waits for every configured client and stops the round on
+timeout; it never silently aggregates an incomplete round. With the example
+configuration, completed global models and JSON audit manifests appear under
+`artifacts/distributed_federation/demo-001/`.
 
 ## Important simulation boundary
 

@@ -21,16 +21,26 @@ def parse_args() -> argparse.Namespace:
 
 
 def check_imports() -> None:
-    for name in ("torch", "numpy", "sklearn", "pandas", "safetensors", "confluent_kafka"):
+    for name in (
+        "torch", "numpy", "sklearn", "pandas", "packaging", "safetensors",
+        "safetensors.torch", "confluent_kafka",
+    ):
         module = importlib.import_module(name)
         print(f"[ok] {name} {getattr(module, '__version__', '')}")
 
 
-def check_broker(broker: str) -> None:
+def check_broker(broker: str, required_topics: set[str]) -> None:
     host, port_text = broker.rsplit(":", 1)
     with socket.create_connection((host, int(port_text)), timeout=5):
         pass
     print(f"[ok] TCP connection to Kafka at {broker}")
+    from confluent_kafka.admin import AdminClient
+
+    metadata = AdminClient({"bootstrap.servers": broker}).list_topics(timeout=10)
+    missing = required_topics - set(metadata.topics)
+    if missing:
+        raise RuntimeError(f"Kafka topics missing: {', '.join(sorted(missing))}")
+    print(f"[ok] Kafka topics: {', '.join(sorted(required_topics))}")
 
 
 def check_protocol() -> None:
@@ -60,7 +70,7 @@ def main() -> int:
     config = load_config(args.config, args.broker)
     check_imports()
     check_protocol()
-    check_broker(config.broker)
+    check_broker(config.broker, {config.global_topic, config.update_topic})
 
     if args.role == "central":
         names = ["FCL_CENTRAL_SECRET", *(secret_env_name(c.client_id) for c in config.clients)]
