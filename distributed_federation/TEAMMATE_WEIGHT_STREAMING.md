@@ -148,6 +148,30 @@ The broker must be `10.170.231.39:9092`. All four computers must use the same co
 
 Do not commit `config.json`; it is a per-run local file ignored by Git.
 
+### Update the run ID before a new attempt
+
+Central chooses one new run ID and tells all three teammates. For example:
+
+```text
+team-run-20260902-01
+```
+
+Update your local copy by replacing the example value below with the value
+central supplied:
+
+```bash
+cd ~/Capstone
+NEW_RUN_ID='team-run-20260902-01'
+sed -i -E "s/(\"run_id\"[[:space:]]*:[[:space:]]*)\"[^\"]*\"/\1\"${NEW_RUN_ID}\"/" \
+  distributed_federation/config.json
+python -m json.tool distributed_federation/config.json >/dev/null && echo "CONFIG OK"
+grep '"run_id"' distributed_federation/config.json
+```
+
+The printed value must match central and the other two banks exactly. Use a
+new run ID after every completed, stopped, timed-out, or failed attempt. The run
+ID is different from the smoke-test `--test-id`.
+
 ## 5. Load your two secrets
 
 Enter the values privately in every new terminal used for the worker. Nothing is displayed while typing:
@@ -171,6 +195,19 @@ PY
 ```
 
 Both must say `OK`.
+
+### When central rotates the security keys
+
+Normally, enter the same two existing values again after opening a new terminal
+or rebooting. Do not generate your own replacements.
+
+If central explicitly says the keys were rotated, discard the old values and
+repeat the two `read` commands using the new central secret and your new bank
+secret. Environment assignments overwrite the old terminal values. Verify both
+again with the safe check above.
+
+Central must rotate all related keys as one coordinated change. If even one
+computer uses an older value, signatures will be rejected.
 
 ## 6. Run your preflight
 

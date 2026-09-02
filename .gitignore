@@ -3,5 +3,6 @@ __pycache__/
 .venv/
 environment-lock.txt
 distributed_federation/.env
+distributed_federation/.env.backup
 distributed_federation/config.json
 distributed_federation/kafka/.env
