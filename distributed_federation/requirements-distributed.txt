@@ -1,6 +1,7 @@
 # Install PyTorch separately using the CPU-only command in README.md.
 confluent-kafka==2.12.*
 safetensors==0.6.*
+packaging>=24,<27
 numpy==2.3.*
 pandas==2.3.*
 scikit-learn==1.7.*

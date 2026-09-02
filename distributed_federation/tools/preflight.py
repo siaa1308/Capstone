@@ -21,7 +21,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def check_imports() -> None:
-    for name in ("torch", "numpy", "sklearn", "pandas", "safetensors", "confluent_kafka"):
+    for name in (
+        "torch", "numpy", "sklearn", "pandas", "packaging", "safetensors",
+        "safetensors.torch", "confluent_kafka",
+    ):
         module = importlib.import_module(name)
         print(f"[ok] {name} {getattr(module, '__version__', '')}")
 
