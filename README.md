@@ -1,5 +1,13 @@
 # Project Context — Federated Continual Learning for Privacy-Preserving AML
 
+## Streaming interface plan
+
+See the [model-weight streaming blueprint](docs/STREAMING_BLUEPRINT.md) for the
+planned Windows/macOS container setup and browser dashboard. This phase transfers
+existing weight files only; it does not run or alter model training or aggregation.
+The dashboard and launchers are not implemented yet. Older operational guides in
+`distributed_federation/` now point to this blueprint.
+
 You are working on my B.Tech CSE/AI-ML capstone project.
 
 ## 1. Project Title
