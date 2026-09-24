@@ -1,0 +1,18 @@
+COMMAND ["/usr/local/bin/python3", "-B", "/Users/sia/Desktop/ibm_aml/src/gnn/adaptive_continual_federated.py", "--rounds", "16", "--local-epochs", "3", "--replay-size", "2000", "--hidden-channels", "128", "--batch-size", "1024", "--learning-rate", "0.001", "--threads", "1", "--replay", "risk_context", "--aggregation", "fedavg", "--distill", "0.05", "--seed", "42", "--mode", "federated", "--output-dir", "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/federated/context_retention/seed_42"]
+round=01 macro=0.267817 best=0.267817 banks=JPMorgan_Chase:0.3359,Wells_Fargo:0.1459,Key_Bank:0.3217 seconds=21.4
+round=02 macro=0.406489 best=0.406489 banks=JPMorgan_Chase:0.5057,Wells_Fargo:0.1058,Key_Bank:0.6079 seconds=43.1
+round=03 macro=0.331280 best=0.406489 banks=JPMorgan_Chase:0.3893,Wells_Fargo:0.1084,Key_Bank:0.4961 seconds=65.0
+round=04 macro=0.327344 best=0.406489 banks=JPMorgan_Chase:0.3773,Wells_Fargo:0.1129,Key_Bank:0.4918 seconds=87.5
+round=05 macro=0.333681 best=0.406489 banks=JPMorgan_Chase:0.3969,Wells_Fargo:0.1204,Key_Bank:0.4837 seconds=110.6
+round=06 macro=0.350770 best=0.406489 banks=JPMorgan_Chase:0.4492,Wells_Fargo:0.1162,Key_Bank:0.4868 seconds=135.5
+round=07 macro=0.400332 best=0.406489 banks=JPMorgan_Chase:0.4595,Wells_Fargo:0.1372,Key_Bank:0.6042 seconds=160.7
+round=08 macro=0.337317 best=0.406489 banks=JPMorgan_Chase:0.4259,Wells_Fargo:0.1228,Key_Bank:0.4633 seconds=186.1
+round=09 macro=0.340572 best=0.406489 banks=JPMorgan_Chase:0.3646,Wells_Fargo:0.1179,Key_Bank:0.5392 seconds=215.1
+round=10 macro=0.319802 best=0.406489 banks=JPMorgan_Chase:0.3566,Wells_Fargo:0.1115,Key_Bank:0.4913 seconds=248.0
+round=11 macro=0.220157 best=0.406489 banks=JPMorgan_Chase:0.3263,Wells_Fargo:0.0748,Key_Bank:0.2594 seconds=276.4
+round=12 macro=0.212366 best=0.406489 banks=JPMorgan_Chase:0.3174,Wells_Fargo:0.0727,Key_Bank:0.2470 seconds=304.4
+round=13 macro=0.205772 best=0.406489 banks=JPMorgan_Chase:0.3190,Wells_Fargo:0.0750,Key_Bank:0.2233 seconds=330.5
+round=14 macro=0.260948 best=0.406489 banks=JPMorgan_Chase:0.3322,Wells_Fargo:0.1378,Key_Bank:0.3128 seconds=356.9
+round=15 macro=0.142922 best=0.406489 banks=JPMorgan_Chase:0.2961,Wells_Fargo:0.0678,Key_Bank:0.0648 seconds=380.7
+round=16 macro=0.182497 best=0.406489 banks=JPMorgan_Chase:0.3066,Wells_Fargo:0.1062,Key_Bank:0.1348 seconds=404.9
+COMPLETE validation=0.406489 seconds=404.9

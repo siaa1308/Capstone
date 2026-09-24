@@ -1,0 +1,45 @@
+{
+  "criterion": "Highest seed-42 macro August validation PR-AUC among all four prespecified non-baseline variants",
+  "winner": "context_replay",
+  "screen": {
+    "baseline": {
+      "validation": 0.786324055495376,
+      "metrics_sha256": "e9122dc7fff981a91e573f8982c2ed81894d04133493dc57b7ebfa5f0a772802"
+    },
+    "context_replay": {
+      "validation": 0.8221034189358418,
+      "metrics_sha256": "e6a8bbd9759566b21c114282d70e972bea778454d7b234d55ed4e99bfc17c50e"
+    },
+    "context_retention": {
+      "validation": 0.41289815732404517,
+      "metrics_sha256": "b046167da2760c07e99d5d701178a11d002271d8bdc124625ef1587cd8236af3"
+    },
+    "temporal_aggregation": {
+      "validation": 0.740682114382742,
+      "metrics_sha256": "af39bfe56add5c545099afc0621792af67cf574a82e146fe805b64bb79dfb3c7"
+    },
+    "combined": {
+      "validation": 0.4122284563223089,
+      "metrics_sha256": "42eccf47331b42a1639ac99fbd9398774f32f177ebfc26ce6a19c7ddafdae97f"
+    }
+  },
+  "test_loaded": false,
+  "confirmation_seeds": [
+    52,
+    62
+  ],
+  "configuration": {
+    "rounds": 16,
+    "local_epochs": 3,
+    "replay_size": 2000,
+    "hidden_channels": 128,
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "threads": 1,
+    "rng_policy": "global",
+    "replay": "risk_context",
+    "aggregation": "fedavg",
+    "distill": 0.0
+  },
+  "study_config_sha256": "db5718a750d8ee1fa94a189df11f668ecaf530b6030f0976ac137b8adf11d759"
+}

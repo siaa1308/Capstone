@@ -1,0 +1,67 @@
+{
+  "study": "Warm-start adaptive FCL from the existing frozen model",
+  "protocol": "Validation-only; no September loading during selection",
+  "selection": "Screen all specified variants at seed 42. Confirm best validation candidate against baseline at seeds 52 and 62. Retain all runs, including failures and negative results.",
+  "common": {
+    "rounds": 4,
+    "local_epochs": 3,
+    "replay_size": 2000,
+    "hidden_channels": 128,
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "threads": 1,
+    "rng_policy": "global",
+    "initial_checkpoint": "artifacts/final_evaluation/corrected_fedavg/seed_{seed}/global_model.pt"
+  },
+  "screen_seed": 42,
+  "confirmation_seeds": [
+    52,
+    62
+  ],
+  "variants": {
+    "baseline": {
+      "replay": "uniform",
+      "aggregation": "fedavg",
+      "distill": 0.0
+    },
+    "context_replay": {
+      "replay": "risk_context",
+      "aggregation": "fedavg",
+      "distill": 0.0
+    },
+    "context_retention": {
+      "replay": "risk_context",
+      "aggregation": "fedavg",
+      "distill": 0.05
+    },
+    "temporal_aggregation": {
+      "replay": "uniform",
+      "aggregation": "temporal_harmonized",
+      "distill": 0.0
+    },
+    "combined": {
+      "replay": "risk_context",
+      "aggregation": "temporal_harmonized",
+      "distill": 0.05
+    },
+    "context_harmonized": {
+      "replay": "risk_context",
+      "aggregation": "temporal_harmonized",
+      "distill": 0.0
+    }
+  },
+  "local_cl_comparison": {
+    "local_epochs": 20,
+    "variants": [
+      "baseline",
+      "context_retention"
+    ],
+    "seeds": [
+      42,
+      52,
+      62
+    ]
+  },
+  "novelty_status": "Proposed AML-specific combination; replay, distillation, and conflict projection have prior art. No first-in-literature claim.",
+  "protocol_note": "Separate improvement study starting from the actual existing trained model. Every candidate and the ordinary-FedAvg continuation control receives the same seed-specific frozen checkpoint and four additional rounds. Round zero is eligible to prevent promoting a worse model. Screen and confirmation use August only. This adaptive follow-up was specified after observing runtime/RNG sensitivity in scratch runs. After completing the original five seed-42 variants, logit retention was found harmful. One additional ablation combines risk/context replay with temporal harmonization WITHOUT distillation. It is evaluated before freezing selection or running confirmation seeds; all original outcomes remain present."
+}

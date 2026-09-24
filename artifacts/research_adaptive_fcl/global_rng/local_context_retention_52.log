@@ -1,0 +1,5 @@
+COMMAND ["/usr/local/bin/python3", "-B", "/Users/sia/Desktop/ibm_aml/src/gnn/adaptive_continual_federated.py", "--rounds", "16", "--local-epochs", "20", "--replay-size", "2000", "--hidden-channels", "128", "--batch-size", "1024", "--learning-rate", "0.001", "--threads", "1", "--rng-policy", "global", "--replay", "risk_context", "--aggregation", "fedavg", "--distill", "0.05", "--seed", "52", "--mode", "local", "--output-dir", "artifacts/research_adaptive_fcl/global_rng/local/context_retention/seed_52"]
+JPMorgan_Chase 0.5543423205984258
+Wells_Fargo 0.4655147985046396
+Key_Bank 0.49429195292730504
+COMPLETE validation=0.504716 seconds=61.8

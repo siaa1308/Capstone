@@ -1,0 +1,159 @@
+{
+  "status": "frozen_before_exploratory_september",
+  "candidate": "context_replay",
+  "mode": "local",
+  "study_root": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng",
+  "selection_sha256": "ed2612e1d810405c8506644217dfdf8f0e10cb8aa53e78ec7d8c9ec4c1b42221",
+  "seeds": [
+    42,
+    52,
+    62
+  ],
+  "entries": [
+    {
+      "variant": "baseline",
+      "seed": 42,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_42/JPMorgan_Chase_continual.pt",
+      "checkpoint_sha256": "44099c75320b48f49bc9b5bdffbc093e8037b2ad06a297127f40df6332dfffd3",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_42/metrics.json",
+      "metrics_sha256": "a738de8f843b763c6c52f776a383a5eb89a7e4f7ba3d6431d42ed7a3010029dd",
+      "macro_validation_pr_auc": 0.4774731924771117,
+      "best_round": 0,
+      "bank_checkpoints": {
+        "JPMorgan_Chase": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_42/JPMorgan_Chase_continual.pt",
+          "sha256": "44099c75320b48f49bc9b5bdffbc093e8037b2ad06a297127f40df6332dfffd3"
+        },
+        "Wells_Fargo": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_42/Wells_Fargo_continual.pt",
+          "sha256": "3181f1eedd9104f23d991383f506e19c23900b3c40bc6ef895a7ee805b5fb051"
+        },
+        "Key_Bank": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_42/Key_Bank_continual.pt",
+          "sha256": "150536aedab5089a67a574469eb315e165f79124570783c73cb30a978122afb5"
+        }
+      }
+    },
+    {
+      "variant": "baseline",
+      "seed": 52,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_52/JPMorgan_Chase_continual.pt",
+      "checkpoint_sha256": "a836a7dbf493d3be83574553288fd931c89dc866d2f7674cc5edb78aba94e5b2",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_52/metrics.json",
+      "metrics_sha256": "7a98d12c552c6a195c49a7a5611fa0c762b294d684d70db9b6dfc1704060e215",
+      "macro_validation_pr_auc": 0.5034527778906027,
+      "best_round": 0,
+      "bank_checkpoints": {
+        "JPMorgan_Chase": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_52/JPMorgan_Chase_continual.pt",
+          "sha256": "a836a7dbf493d3be83574553288fd931c89dc866d2f7674cc5edb78aba94e5b2"
+        },
+        "Wells_Fargo": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_52/Wells_Fargo_continual.pt",
+          "sha256": "e81756665d8118642618c91ea7267e819d569691aa96510888413a50e8b59196"
+        },
+        "Key_Bank": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_52/Key_Bank_continual.pt",
+          "sha256": "d870fc1d37750104b2342da94df9ea9b3c204b35708cdbf31dfe772889ab2a95"
+        }
+      }
+    },
+    {
+      "variant": "baseline",
+      "seed": 62,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_62/JPMorgan_Chase_continual.pt",
+      "checkpoint_sha256": "a8cd59475c1e02ddc9d262438829a57d9a2b3be027bf05801882b7e1e013ead1",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_62/metrics.json",
+      "metrics_sha256": "60aa96b5a99a886118f5db06e41c5806fb38b01451c88f5025fda03c93d7e65c",
+      "macro_validation_pr_auc": 0.5833809836253042,
+      "best_round": 0,
+      "bank_checkpoints": {
+        "JPMorgan_Chase": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_62/JPMorgan_Chase_continual.pt",
+          "sha256": "a8cd59475c1e02ddc9d262438829a57d9a2b3be027bf05801882b7e1e013ead1"
+        },
+        "Wells_Fargo": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_62/Wells_Fargo_continual.pt",
+          "sha256": "32b603dd3009c2d4bbd310012f915e7888efd0fcc8d0a410301fa8f9db6c6e83"
+        },
+        "Key_Bank": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/baseline/seed_62/Key_Bank_continual.pt",
+          "sha256": "2890f21e88c45f0caa70d07a5b13106a48470ee0d19e7695d2663b5c0e72e702"
+        }
+      }
+    },
+    {
+      "variant": "context_replay",
+      "seed": 42,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_42/JPMorgan_Chase_continual.pt",
+      "checkpoint_sha256": "a669645e22c46db3c20dd71268eb6885cfcb2748264efa6e0b9f92eb90cf3a06",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_42/metrics.json",
+      "metrics_sha256": "7f6cd0a224e138104612b8eca13614e7aff96e9c6df9b4c14695c619e0a15a88",
+      "macro_validation_pr_auc": 0.5816386842493136,
+      "best_round": 0,
+      "bank_checkpoints": {
+        "JPMorgan_Chase": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_42/JPMorgan_Chase_continual.pt",
+          "sha256": "a669645e22c46db3c20dd71268eb6885cfcb2748264efa6e0b9f92eb90cf3a06"
+        },
+        "Wells_Fargo": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_42/Wells_Fargo_continual.pt",
+          "sha256": "df7119b2b017beec9ffed6637ea31c46ea59e6f48fa4ba72c71766fd7e8d285a"
+        },
+        "Key_Bank": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_42/Key_Bank_continual.pt",
+          "sha256": "595642fa5cedfe59c183e27877162435bccdcfe7d652ce0f5cc67bda849c043f"
+        }
+      }
+    },
+    {
+      "variant": "context_replay",
+      "seed": 52,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_52/JPMorgan_Chase_continual.pt",
+      "checkpoint_sha256": "f18fba690428d7da68441b722336df3f93a3930208f2686ed6edd6982fe06663",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_52/metrics.json",
+      "metrics_sha256": "c033d47a62d85f10758aeccfc9c77730075393c367cafd3434084f3b94f2f793",
+      "macro_validation_pr_auc": 0.6518475991082845,
+      "best_round": 0,
+      "bank_checkpoints": {
+        "JPMorgan_Chase": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_52/JPMorgan_Chase_continual.pt",
+          "sha256": "f18fba690428d7da68441b722336df3f93a3930208f2686ed6edd6982fe06663"
+        },
+        "Wells_Fargo": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_52/Wells_Fargo_continual.pt",
+          "sha256": "2e308b3b5d2223d4b2b9b333838006f9b048999143b8b56590a4623d24909224"
+        },
+        "Key_Bank": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_52/Key_Bank_continual.pt",
+          "sha256": "4e882d1769e36a4338482759b086cd03691a8f131c04469efcc7dae2449b2d32"
+        }
+      }
+    },
+    {
+      "variant": "context_replay",
+      "seed": 62,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_62/JPMorgan_Chase_continual.pt",
+      "checkpoint_sha256": "40d1086d52c5723a352026cfc633887691c56efac8937188978837f44ccb9d71",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_62/metrics.json",
+      "metrics_sha256": "526c64dc65f79e82a9839de29bf7768b0769b88bd8a0c365ef5d3c46696e368f",
+      "macro_validation_pr_auc": 0.6643138630816636,
+      "best_round": 0,
+      "bank_checkpoints": {
+        "JPMorgan_Chase": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_62/JPMorgan_Chase_continual.pt",
+          "sha256": "40d1086d52c5723a352026cfc633887691c56efac8937188978837f44ccb9d71"
+        },
+        "Wells_Fargo": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_62/Wells_Fargo_continual.pt",
+          "sha256": "018f6dfaea17de179ed25f3a747fd8def0e377589bf71f4b59e38f360927f730"
+        },
+        "Key_Bank": {
+          "path": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/global_rng/local/context_replay/seed_62/Key_Bank_continual.pt",
+          "sha256": "7230c038f2ae71a13224c1932d9a49e7cd78d1bbd298eea420bfe1b94e5aa036"
+        }
+      }
+    }
+  ],
+  "evaluation_status": "Exploratory: September was already inspected during earlier project development. No post-September tuning permitted in this study."
+}

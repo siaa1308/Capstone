@@ -1,0 +1,75 @@
+{
+  "status": "frozen_before_exploratory_september",
+  "candidate": "context_harmonized",
+  "mode": "federated",
+  "study_root": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start",
+  "selection_sha256": "21a5b8bf2419b96041dd85cc8cb4627101db6e6d68eef3f66be21d5e3e4b6688",
+  "seeds": [
+    42,
+    52,
+    62
+  ],
+  "entries": [
+    {
+      "variant": "baseline",
+      "seed": 42,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/baseline/seed_42/global_model.pt",
+      "checkpoint_sha256": "d06fdfdba75878611f223086a1b4534583fe12a500382f370a46525cdbaff0d3",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/baseline/seed_42/metrics.json",
+      "metrics_sha256": "ff71dec4cb98640f3f85acef4b1b6d7510a89f5f5e68b36a53de7b61f52192ff",
+      "macro_validation_pr_auc": 0.8598755752875441,
+      "best_round": 2
+    },
+    {
+      "variant": "baseline",
+      "seed": 52,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/baseline/seed_52/global_model.pt",
+      "checkpoint_sha256": "df27734ba04609d4d832c70b25b881aadd84d0a3ae6c37a2a222e423ca0b9bf0",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/baseline/seed_52/metrics.json",
+      "metrics_sha256": "2ed9b0366336a638e2c0aa8cd3c7a05319fccab02250332672250f202f88c551",
+      "macro_validation_pr_auc": 0.8125550242393533,
+      "best_round": 3
+    },
+    {
+      "variant": "baseline",
+      "seed": 62,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/baseline/seed_62/global_model.pt",
+      "checkpoint_sha256": "cdc9fcf8bb47d14af4d12564dfcb0df31c9fde8dae52fc6f4b3cfb3d27133255",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/baseline/seed_62/metrics.json",
+      "metrics_sha256": "9d8f1856181ba87eb6bf1a6a7b6ad8fc3cc7cc5da532f1ef4741e488a322d83c",
+      "macro_validation_pr_auc": 0.6296030248583487,
+      "best_round": 1
+    },
+    {
+      "variant": "context_harmonized",
+      "seed": 42,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/context_harmonized/seed_42/global_model.pt",
+      "checkpoint_sha256": "d650af6959d1da46888f30fb79bbfd888a6ec20743d14d447ea078dc351536f5",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/context_harmonized/seed_42/metrics.json",
+      "metrics_sha256": "ba6c6e33b87d6d7b4c95f2e45e3db25786d9cbdceb43232a3d0bcc4a22086778",
+      "macro_validation_pr_auc": 0.9233876194517373,
+      "best_round": 4
+    },
+    {
+      "variant": "context_harmonized",
+      "seed": 52,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/context_harmonized/seed_52/global_model.pt",
+      "checkpoint_sha256": "98b6c782a27013e4b1917669b2a5ae48d3a7e44ce6a9aa0149aef446473ab0e2",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/context_harmonized/seed_52/metrics.json",
+      "metrics_sha256": "2f51ec81f602767d312bccbb4f417ac3f88abb88f077be62b62aeca968fa4ae3",
+      "macro_validation_pr_auc": 0.860740484587995,
+      "best_round": 3
+    },
+    {
+      "variant": "context_harmonized",
+      "seed": 62,
+      "checkpoint": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/context_harmonized/seed_62/global_model.pt",
+      "checkpoint_sha256": "4cd0854f6740f99a9f9ef7f1ba3360c06b5178846394feb73033da718ac715fe",
+      "metrics": "/Users/sia/Desktop/ibm_aml/artifacts/research_adaptive_fcl/warm_start/federated/context_harmonized/seed_62/metrics.json",
+      "metrics_sha256": "8f37963ff77c7d90d9aa4f1571179de02afb05ebbd08b8515426b974df4f2b20",
+      "macro_validation_pr_auc": 0.6500968386353175,
+      "best_round": 2
+    }
+  ],
+  "evaluation_status": "Exploratory: September was already inspected during earlier project development. No post-September tuning permitted in this study."
+}

@@ -1,0 +1,14 @@
+{
+  "purpose": "Validation-only reproduction using the existing frozen research entry point",
+  "seed": 42,
+  "torch_threads": 1,
+  "deterministic_algorithms": true,
+  "test_loaded": false,
+  "frozen_configuration": "configs/final_pipeline.json",
+  "source_hashes": {
+    "src/gnn/causal_temporal_graphsage.py": "13841186c224f910f2fc710b0b368739d956f1bd58078c9b343b58a0290f1d4a",
+    "src/gnn/continual_temporal_graphsage.py": "3ab7bc55e8b14f6dc69cc8d1188fc4daaf806e3010e00764b13bedeecea721d5",
+    "src/gnn/federated_causal_temporal_graphsage.py": "fb99c8fadc1b805c84ce2b7cfa7b9881cbc32c4b6a728fad11e53c90fba9307b",
+    "configs/final_pipeline.json": "efccec4d46761b9324b20866d036c18b6205fde13fec05de4b1edcb7bbaf3e80"
+  }
+}

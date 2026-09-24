@@ -1,0 +1,35 @@
+{
+  "evaluation_status": "Exploratory: September was already inspected during earlier project development. No post-September tuning permitted in this study.",
+  "mode": "federated",
+  "freeze_sha256": "22cc888b20aeba3db39c6c11b6b8eddc3bac64f6b3b3907296cfda95d81b1e6c",
+  "methods": {
+    "baseline": {
+      "mean_pr_auc": 0.7872007759425871,
+      "sample_sd": 0.12783066468751547,
+      "seeds": {
+        "42": 0.889409347639722,
+        "52": 0.828323030407401,
+        "62": 0.6438699497806384
+      },
+      "per_bank_mean_pr_auc": {
+        "JPMorgan_Chase": 0.8021037552976287,
+        "Wells_Fargo": 0.8646059557265092,
+        "Key_Bank": 0.6948926168036235
+      }
+    },
+    "context_harmonized": {
+      "mean_pr_auc": 0.8709756386377939,
+      "sample_sd": 0.061091702975102545,
+      "seeds": {
+        "42": 0.9316075373015485,
+        "52": 0.8718850927575822,
+        "62": 0.8094342858542509
+      },
+      "per_bank_mean_pr_auc": {
+        "JPMorgan_Chase": 0.9216962726480785,
+        "Wells_Fargo": 0.9547336819661705,
+        "Key_Bank": 0.7364969612991326
+      }
+    }
+  }
+}

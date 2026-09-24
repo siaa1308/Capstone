@@ -2,7 +2,7 @@
 
 This capstone evaluates privacy-preserving anti-money-laundering detection on a chronological, highly imbalanced transaction graph. The final pipeline progresses from a bank-local temporal GNN, to replay-based continual learning, to federated continual learning with FedAvg. PR-AUC is the primary metric; Recall@K and Precision@K measure performance under fixed analyst alert budgets.
 
-## Final result
+## Original frozen results
 
 | Frozen method | August validation PR-AUC | September PR-AUC |
 |---|---:|---:|
@@ -10,9 +10,24 @@ This capstone evaluates privacy-preserving anti-money-laundering detection on a 
 | Continual Learning + replay | 0.599 ± 0.038 | 0.581 ± 0.016 |
 | FedAvg + local CL/replay | **0.708 ± 0.094** | **0.759 ± 0.036** |
 
-The corrected FedAvg pipeline is the strongest final model. It improves September PR-AUC by 0.318 absolute (71.9% relative) over Local and by 0.178 absolute (30.5% relative) over CL. The earlier FedAvg result of 0.228 ± 0.035 is retained as a diagnostic negative result under `artifacts/historical/original_fedavg_final/`; it used a mismatched no-replay, sample-weighted procedure.
+The corrected FedAvg pipeline was the strongest model in the original frozen evaluation. It improves September PR-AUC by 0.318 absolute (71.9% relative) over Local and by 0.178 absolute (30.5% relative) over CL. The earlier FedAvg result of 0.228 ± 0.035 is retained as a diagnostic negative result under `artifacts/historical/original_fedavg_final/`; it used a mismatched no-replay, sample-weighted procedure.
 
 See [`docs/FINAL_EVALUATION_REPORT.md`](docs/FINAL_EVALUATION_REPORT.md) for the authoritative paper-ready results and limitations.
+
+## Adaptive research update
+
+A separate completed study adds risk and account-context replay plus temporal update harmonization. Across three seeds, the selected FCL method reaches **0.871 ± 0.061 September PR-AUC**, versus **0.787 ± 0.128** for matched FedAvg continuation. Standalone context-replay CL reaches **0.666 ± 0.060**, versus **0.534 ± 0.034** for its matched baseline. September was historically inspected, so these new results are **exploratory**; the original frozen results above remain preserved.
+
+| Adaptive study method | August PR-AUC | September PR-AUC (exploratory) |
+|---|---:|---:|
+| Matched continual-learning baseline | 0.5214 ± 0.0552 | 0.5339 ± 0.0338 |
+| **Risk and account-context replay CL** | **0.6326 ± 0.0446** | **0.6656 ± 0.0599** |
+| Matched FedAvg continuation | 0.7673 ± 0.1216 | 0.7872 ± 0.1278 |
+| **Context replay + temporal harmonization** | **0.8114 ± 0.1432** | **0.8710 ± 0.0611** |
+
+Values are bank-macro means ± sample standard deviations across seeds 42, 52, and 62. The new federated model gains **11.2 percentage points** over historical FedAvg and **8.4 points** over its matched continuation control. Both new methods improve over their matched controls on all three seeds. Configuration and checkpoint selection used August only.
+
+See [the completed results, ablations, and checkpoint paths](docs/ADAPTIVE_FCL_RESULTS.md) and [method definitions and prior work](docs/ADAPTIVE_FCL_RESEARCH.md). The new implementation is in the research simulator; it is not deployed through Kafka.
 
 ## Cohort and temporal protocol
 

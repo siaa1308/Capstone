@@ -1,0 +1,50 @@
+{
+  "criterion": "Highest seed-42 macro August validation PR-AUC among all 5 screened non-baseline variants; see study protocol for adaptive follow-ups",
+  "winner": "context_harmonized",
+  "screen": {
+    "baseline": {
+      "validation": 0.8598755752875441,
+      "metrics_sha256": "ff71dec4cb98640f3f85acef4b1b6d7510a89f5f5e68b36a53de7b61f52192ff"
+    },
+    "context_replay": {
+      "validation": 0.8968391753827053,
+      "metrics_sha256": "a1c851ae40c7afbc825db47e494460929ea8317f301bcc4813a90f35eadb147e"
+    },
+    "context_retention": {
+      "validation": 0.7317251573260588,
+      "metrics_sha256": "68bf92500f98c9b5f227cdd878bf0c2b75e48f6e5307327772703f81fc760174"
+    },
+    "temporal_aggregation": {
+      "validation": 0.9033995077059057,
+      "metrics_sha256": "192c505a0ac7a7e385dd34971aa5d4af9ee947575b224aabd1f7e6a155f1ba9c"
+    },
+    "combined": {
+      "validation": 0.8227029854381668,
+      "metrics_sha256": "a2d4f9908c266a2e98eaf91a29b6abad1e0db6b6f72da116cf540df663b69723"
+    },
+    "context_harmonized": {
+      "validation": 0.9233876194517373,
+      "metrics_sha256": "ba6c6e33b87d6d7b4c95f2e45e3db25786d9cbdceb43232a3d0bcc4a22086778"
+    }
+  },
+  "test_loaded": false,
+  "confirmation_seeds": [
+    52,
+    62
+  ],
+  "configuration": {
+    "rounds": 4,
+    "local_epochs": 3,
+    "replay_size": 2000,
+    "hidden_channels": 128,
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "threads": 1,
+    "rng_policy": "global",
+    "initial_checkpoint": "artifacts/final_evaluation/corrected_fedavg/seed_{seed}/global_model.pt",
+    "replay": "risk_context",
+    "aggregation": "temporal_harmonized",
+    "distill": 0.0
+  },
+  "study_config_sha256": "319d8e879942a35dd34dab817b94ac0cf5c419381aa45b0e671159d2d2358211"
+}

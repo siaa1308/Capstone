@@ -1,0 +1,7 @@
+COMMAND ["/usr/local/bin/python3", "-B", "/Users/sia/Desktop/ibm_aml/src/gnn/adaptive_continual_federated.py", "--rounds", "4", "--local-epochs", "3", "--replay-size", "2000", "--hidden-channels", "128", "--batch-size", "1024", "--learning-rate", "0.001", "--threads", "1", "--rng-policy", "global", "--initial-checkpoint", "artifacts/final_evaluation/corrected_fedavg/seed_42/global_model.pt", "--replay", "risk_context", "--aggregation", "fedavg", "--distill", "0.05", "--seed", "42", "--mode", "federated", "--output-dir", "artifacts/research_adaptive_fcl/warm_start/federated/context_retention/seed_42"]
+INITIAL validation=0.714167
+round=01 macro=0.501063 best=0.714167 banks=JPMorgan_Chase:0.6123,Wells_Fargo:0.1997,Key_Bank:0.6912 seconds=32.5
+round=02 macro=0.731725 best=0.731725 banks=JPMorgan_Chase:0.6824,Wells_Fargo:0.7832,Key_Bank:0.7296 seconds=54.3
+round=03 macro=0.721554 best=0.731725 banks=JPMorgan_Chase:0.6595,Wells_Fargo:0.8039,Key_Bank:0.7013 seconds=80.3
+round=04 macro=0.245397 best=0.731725 banks=JPMorgan_Chase:0.4526,Wells_Fargo:0.0851,Key_Bank:0.1985 seconds=96.1
+COMPLETE validation=0.731725 seconds=96.1

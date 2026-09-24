@@ -1,0 +1,61 @@
+{
+  "study": "Adaptive FCL with original global RNG policy",
+  "protocol": "Validation-only; no September loading during selection",
+  "selection": "Screen all specified variants at seed 42. Confirm best validation candidate against baseline at seeds 52 and 62. Retain all runs, including failures and negative results.",
+  "common": {
+    "rounds": 16,
+    "local_epochs": 3,
+    "replay_size": 2000,
+    "hidden_channels": 128,
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "threads": 1,
+    "rng_policy": "global"
+  },
+  "screen_seed": 42,
+  "confirmation_seeds": [
+    52,
+    62
+  ],
+  "variants": {
+    "baseline": {
+      "replay": "uniform",
+      "aggregation": "fedavg",
+      "distill": 0.0
+    },
+    "context_replay": {
+      "replay": "risk_context",
+      "aggregation": "fedavg",
+      "distill": 0.0
+    },
+    "context_retention": {
+      "replay": "risk_context",
+      "aggregation": "fedavg",
+      "distill": 0.05
+    },
+    "temporal_aggregation": {
+      "replay": "uniform",
+      "aggregation": "temporal_harmonized",
+      "distill": 0.0
+    },
+    "combined": {
+      "replay": "risk_context",
+      "aggregation": "temporal_harmonized",
+      "distill": 0.05
+    }
+  },
+  "local_cl_comparison": {
+    "local_epochs": 20,
+    "variants": [
+      "baseline",
+      "context_retention"
+    ],
+    "seeds": [
+      42,
+      52,
+      62
+    ]
+  },
+  "novelty_status": "Proposed AML-specific combination; replay, distillation, and conflict projection have prior art. No first-in-literature claim.",
+  "protocol_note": "The initial per-client reseeding screen weakened the baseline. This main study restores the original global RNG policy; a unit test verifies identical uniform-replay client parameter updates. All earlier evidence is retained separately."
+}

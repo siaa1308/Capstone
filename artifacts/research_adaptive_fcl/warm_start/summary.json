@@ -1,0 +1,448 @@
+{
+  "federated/baseline": {
+    "macro_validation_pr_auc": {
+      "mean": 0.7673445414617487,
+      "sample_sd": 0.1216114825377507,
+      "n": 3
+    },
+    "seeds": {
+      "42": 0.8598755752875441,
+      "52": 0.8125550242393533,
+      "62": 0.6296030248583487
+    },
+    "best_rounds": {
+      "42": 2,
+      "52": 3,
+      "62": 1
+    },
+    "per_bank": {
+      "JPMorgan_Chase": {
+        "validation_pr_auc": {
+          "mean": 0.7242918880545988,
+          "sample_sd": 0.0601032568014635,
+          "n": 3
+        },
+        "recall_at_25": {
+          "mean": 0.6875,
+          "sample_sd": 0.0625,
+          "n": 3
+        },
+        "precision_at_25": {
+          "mean": 0.44,
+          "sample_sd": 0.03999999999999998,
+          "n": 3
+        }
+      },
+      "Wells_Fargo": {
+        "validation_pr_auc": {
+          "mean": 0.8027964144493034,
+          "sample_sd": 0.256610374755237,
+          "n": 3
+        },
+        "recall_at_25": {
+          "mean": 0.7272727272727273,
+          "sample_sd": 0.31491832864888675,
+          "n": 3
+        },
+        "precision_at_25": {
+          "mean": 0.64,
+          "sample_sd": 0.27712812921102037,
+          "n": 3
+        }
+      },
+      "Key_Bank": {
+        "validation_pr_auc": {
+          "mean": 0.774945321881344,
+          "sample_sd": 0.07704996494043982,
+          "n": 3
+        },
+        "recall_at_25": {
+          "mean": 0.7301587301587301,
+          "sample_sd": 0.0549857399228215,
+          "n": 3
+        },
+        "precision_at_25": {
+          "mean": 0.6133333333333334,
+          "sample_sd": 0.046188021535170036,
+          "n": 3
+        }
+      }
+    }
+  },
+  "federated/combined": {
+    "macro_validation_pr_auc": {
+      "mean": 0.8227029854381668,
+      "sample_sd": null,
+      "n": 1
+    },
+    "seeds": {
+      "42": 0.8227029854381668
+    },
+    "best_rounds": {
+      "42": 3
+    },
+    "per_bank": {
+      "JPMorgan_Chase": {
+        "validation_pr_auc": {
+          "mean": 0.7161432392279167,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.75,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.48,
+          "sample_sd": null,
+          "n": 1
+        }
+      },
+      "Wells_Fargo": {
+        "validation_pr_auc": {
+          "mean": 0.9385836856674609,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.9090909090909091,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.8,
+          "sample_sd": null,
+          "n": 1
+        }
+      },
+      "Key_Bank": {
+        "validation_pr_auc": {
+          "mean": 0.8133820314191231,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.8095238095238095,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.68,
+          "sample_sd": null,
+          "n": 1
+        }
+      }
+    },
+    "paired_delta_vs_baseline": {
+      "42": -0.037172589849377324
+    },
+    "paired_delta_summary": {
+      "mean": -0.037172589849377324,
+      "sample_sd": null,
+      "n": 1
+    }
+  },
+  "federated/context_harmonized": {
+    "macro_validation_pr_auc": {
+      "mean": 0.8114083142250166,
+      "sample_sd": 0.14316846717889223,
+      "n": 3
+    },
+    "seeds": {
+      "42": 0.9233876194517373,
+      "52": 0.860740484587995,
+      "62": 0.6500968386353175
+    },
+    "best_rounds": {
+      "42": 4,
+      "52": 3,
+      "62": 2
+    },
+    "per_bank": {
+      "JPMorgan_Chase": {
+        "validation_pr_auc": {
+          "mean": 0.7962885037887322,
+          "sample_sd": 0.08611151082775521,
+          "n": 3
+        },
+        "recall_at_25": {
+          "mean": 0.7708333333333334,
+          "sample_sd": 0.09547032697824667,
+          "n": 3
+        },
+        "precision_at_25": {
+          "mean": 0.49333333333333335,
+          "sample_sd": 0.061101009266077894,
+          "n": 3
+        }
+      },
+      "Wells_Fargo": {
+        "validation_pr_auc": {
+          "mean": 0.8164248923925519,
+          "sample_sd": 0.25433230697465364,
+          "n": 3
+        },
+        "recall_at_25": {
+          "mean": 0.8030303030303031,
+          "sample_sd": 0.262431940540739,
+          "n": 3
+        },
+        "precision_at_25": {
+          "mean": 0.7066666666666667,
+          "sample_sd": 0.2309401076758503,
+          "n": 3
+        }
+      },
+      "Key_Bank": {
+        "validation_pr_auc": {
+          "mean": 0.8215115464937658,
+          "sample_sd": 0.10781082503104122,
+          "n": 3
+        },
+        "recall_at_25": {
+          "mean": 0.7936507936507936,
+          "sample_sd": 0.11983864182969446,
+          "n": 3
+        },
+        "precision_at_25": {
+          "mean": 0.6666666666666667,
+          "sample_sd": 0.1006644591369433,
+          "n": 3
+        }
+      }
+    },
+    "paired_delta_vs_baseline": {
+      "42": 0.0635120441641932,
+      "52": 0.048185460348641684,
+      "62": 0.020493813776968794
+    },
+    "paired_delta_summary": {
+      "mean": 0.044063772763267894,
+      "sample_sd": 0.02180328571169143,
+      "n": 3
+    }
+  },
+  "federated/context_replay": {
+    "macro_validation_pr_auc": {
+      "mean": 0.8968391753827053,
+      "sample_sd": null,
+      "n": 1
+    },
+    "seeds": {
+      "42": 0.8968391753827053
+    },
+    "best_rounds": {
+      "42": 2
+    },
+    "per_bank": {
+      "JPMorgan_Chase": {
+        "validation_pr_auc": {
+          "mean": 0.8342071123321124,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.8125,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.52,
+          "sample_sd": null,
+          "n": 1
+        }
+      },
+      "Wells_Fargo": {
+        "validation_pr_auc": {
+          "mean": 0.9409869958650448,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.9090909090909091,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.8,
+          "sample_sd": null,
+          "n": 1
+        }
+      },
+      "Key_Bank": {
+        "validation_pr_auc": {
+          "mean": 0.9153234179509586,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.8571428571428571,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.72,
+          "sample_sd": null,
+          "n": 1
+        }
+      }
+    },
+    "paired_delta_vs_baseline": {
+      "42": 0.0369636000951612
+    },
+    "paired_delta_summary": {
+      "mean": 0.0369636000951612,
+      "sample_sd": null,
+      "n": 1
+    }
+  },
+  "federated/context_retention": {
+    "macro_validation_pr_auc": {
+      "mean": 0.7317251573260588,
+      "sample_sd": null,
+      "n": 1
+    },
+    "seeds": {
+      "42": 0.7317251573260588
+    },
+    "best_rounds": {
+      "42": 2
+    },
+    "per_bank": {
+      "JPMorgan_Chase": {
+        "validation_pr_auc": {
+          "mean": 0.6824133903275511,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.625,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.4,
+          "sample_sd": null,
+          "n": 1
+        }
+      },
+      "Wells_Fargo": {
+        "validation_pr_auc": {
+          "mean": 0.7831849148650322,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.6363636363636364,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.56,
+          "sample_sd": null,
+          "n": 1
+        }
+      },
+      "Key_Bank": {
+        "validation_pr_auc": {
+          "mean": 0.7295771667855931,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.6666666666666666,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.56,
+          "sample_sd": null,
+          "n": 1
+        }
+      }
+    },
+    "paired_delta_vs_baseline": {
+      "42": -0.1281504179614853
+    },
+    "paired_delta_summary": {
+      "mean": -0.1281504179614853,
+      "sample_sd": null,
+      "n": 1
+    }
+  },
+  "federated/temporal_aggregation": {
+    "macro_validation_pr_auc": {
+      "mean": 0.9033995077059057,
+      "sample_sd": null,
+      "n": 1
+    },
+    "seeds": {
+      "42": 0.9033995077059057
+    },
+    "best_rounds": {
+      "42": 2
+    },
+    "per_bank": {
+      "JPMorgan_Chase": {
+        "validation_pr_auc": {
+          "mean": 0.8974103932790374,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.875,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.56,
+          "sample_sd": null,
+          "n": 1
+        }
+      },
+      "Wells_Fargo": {
+        "validation_pr_auc": {
+          "mean": 0.9589620905410379,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.9090909090909091,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.8,
+          "sample_sd": null,
+          "n": 1
+        }
+      },
+      "Key_Bank": {
+        "validation_pr_auc": {
+          "mean": 0.853826039297642,
+          "sample_sd": null,
+          "n": 1
+        },
+        "recall_at_25": {
+          "mean": 0.7619047619047619,
+          "sample_sd": null,
+          "n": 1
+        },
+        "precision_at_25": {
+          "mean": 0.64,
+          "sample_sd": null,
+          "n": 1
+        }
+      }
+    },
+    "paired_delta_vs_baseline": {
+      "42": 0.04352393241836161
+    },
+    "paired_delta_summary": {
+      "mean": 0.04352393241836161,
+      "sample_sd": null,
+      "n": 1
+    }
+  }
+}
