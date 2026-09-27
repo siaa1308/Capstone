@@ -8,6 +8,7 @@ import time
 from datetime import UTC, datetime
 
 from distributed_federation.common.config import load_config, secret_env_name
+from distributed_federation.common.events import emit
 from distributed_federation.common.kafka_io import make_consumer, make_producer, publish_payload
 from distributed_federation.common.model_runtime import (
     deserialize_state,
@@ -42,6 +43,12 @@ def utc_now() -> str:
 def main() -> int:
     args = parse_args()
     config = load_config(args.config, args.broker)
+    return run(config)
+
+
+def run(config) -> int:
+    """Callable entry point; same learning loop as the original CLI."""
+    emit('initializing')
     central_secret = required_secret("FCL_CENTRAL_SECRET")
     client_secrets = {client.client_id: required_secret(secret_env_name(client.client_id)) for client in config.clients}
 
@@ -58,11 +65,13 @@ def main() -> int:
     assembler = ChunkAssembler()
     run_output = config.output_dir / config.run_id
     global_state = {k: v.detach().cpu().clone() for k, v in runtime.model.state_dict().items()}
+    emit('runtime_ready', schema_sha256=runtime.schema_sha256)
 
     try:
         for round_id in range(1, config.rounds + 1):
             global_payload = serialize_state(global_state)
             base_hash = sha256_bytes(global_payload)
+            emit('broadcasting', round_id, base_model_sha256=base_hash, bytes=len(global_payload))
             metadata = {
                 "message_type": "global_model",
                 "run_id": config.run_id,
@@ -76,6 +85,8 @@ def main() -> int:
                 central_secret, config.max_chunk_bytes,
             )
             print(f"[central] Round {round_id}: published global model {base_hash[:12]}", flush=True)
+            emit('waiting_for_updates', round_id, base_model_sha256=base_hash,
+                 required_clients=[c.client_id for c in config.clients])
 
             received: dict[str, tuple[dict, int, dict]] = {}
             deadline = time.monotonic() + config.round_timeout_seconds
@@ -83,6 +94,7 @@ def main() -> int:
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     missing = sorted(set(client_secrets) - set(received))
+                    emit('round_timed_out', round_id, missing_clients=missing)
                     raise TimeoutError(f"Round {round_id} timed out; missing clients: {', '.join(missing)}")
                 message = consumer.poll(min(1.0, remaining))
                 if message is None:
@@ -119,6 +131,9 @@ def main() -> int:
                     state = deserialize_state(payload)
                     validate_state(state, global_state)
                     received[sender] = (state, examples, update_meta)
+                    emit('update_validated', round_id, client_id=sender, training_examples=examples,
+                         mean_train_loss=update_meta.get('mean_train_loss'),
+                         payload_sha256=update_meta['payload_sha256'])
                     consumer.commit(message=message, asynchronous=False)
                     print(
                         f"[central] Round {round_id}: accepted {sender} "
@@ -129,6 +144,7 @@ def main() -> int:
                     print(f"[central] Rejected Kafka message: {exc}", file=sys.stderr, flush=True)
 
             ordered = [received[client.client_id] for client in config.clients]
+            emit('aggregating', round_id, training_examples={c.client_id: received[c.client_id][1] for c in config.clients})
             global_state = fedavg([item[0] for item in ordered], [item[1] for item in ordered])
             runtime.model.load_state_dict(global_state, strict=True)
             final_payload_hash = sha256_bytes(serialize_state(global_state))
@@ -151,12 +167,16 @@ def main() -> int:
                 ],
                 "schema": runtime.schema,
             }
-            weights_path, _ = save_state_and_manifest(global_state, run_output, round_id, manifest)
+            emit('saving_checkpoint', round_id)
+            weights_path, manifest_path = save_state_and_manifest(global_state, run_output, round_id, manifest)
+            emit('round_completed', round_id, output_global_sha256=final_payload_hash,
+                 checkpoint=str(weights_path), manifest=str(manifest_path))
             print(f"[central] Round {round_id}: aggregated and saved {weights_path}", flush=True)
     finally:
         consumer.close()
 
     print(f"[central] Run {config.run_id} complete ({config.rounds} rounds)", flush=True)
+    emit('run_completed', rounds=config.rounds)
     return 0
 
 

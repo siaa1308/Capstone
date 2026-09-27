@@ -6,6 +6,7 @@ import sys
 import time
 
 from distributed_federation.common.config import load_config
+from distributed_federation.common.events import emit
 from distributed_federation.common.kafka_io import make_consumer, make_producer, publish_payload
 from distributed_federation.common.model_runtime import (
     deserialize_state,
@@ -35,7 +36,13 @@ def required_secret(name: str) -> str:
 def main() -> int:
     args = parse_args()
     config = load_config(args.config, args.broker)
-    client = config.client(args.client_id)
+    return run(config, args.client_id)
+
+
+def run(config, client_id) -> int:
+    """Callable entry point used by both the CLI and process supervisor."""
+    client = config.client(client_id)
+    emit('initializing', client_id=client_id)
     central_secret = required_secret("FCL_CENTRAL_SECRET")
     client_secret = required_secret("FCL_CLIENT_SECRET")
     client_index = [c.client_id for c in config.clients].index(client.client_id)
@@ -50,9 +57,12 @@ def main() -> int:
         [config.global_topic],
     )
     assembler = ChunkAssembler()
+    emit('runtime_ready', client_id=client_id, schema_sha256=runtime.schema_sha256,
+         training_examples=int(len(runtime.streams['training'])))
 
     try:
         for expected_round in range(1, config.rounds + 1):
+            emit('waiting_for_model', expected_round)
             deadline = time.monotonic() + config.round_timeout_seconds
             while True:
                 remaining = deadline - time.monotonic()
@@ -81,13 +91,16 @@ def main() -> int:
                     state = deserialize_state(payload)
                     validate_state(state, runtime.model.state_dict())
                     runtime.model.load_state_dict(state, strict=True)
+                    emit('model_loaded', expected_round, base_model_sha256=global_meta['payload_sha256'])
                     consumer.commit(message=message, asynchronous=False)
                     break
                 except ValueError as exc:
                     print(f"[{client.client_id}] Rejected Kafka message: {exc}", file=sys.stderr, flush=True)
 
             print(f"[{client.client_id}] Round {expected_round}: training locally", flush=True)
+            emit('training', expected_round)
             mean_loss = train_local(runtime, config, expected_round, client_index)
+            emit('training_completed', expected_round, mean_train_loss=mean_loss)
             update_payload = serialize_state(runtime.model.state_dict())
             metadata = {
                 "message_type": "client_update",
@@ -99,10 +112,13 @@ def main() -> int:
                 "training_examples": int(len(runtime.streams["training"])),
                 "mean_train_loss": round(mean_loss, 8),
             }
+            emit('publishing_update', expected_round, bytes=len(update_payload))
             update_hash = publish_payload(
                 producer, config.update_topic, update_payload, metadata,
                 client_secret, config.max_chunk_bytes,
             )
+            emit('update_published', expected_round, payload_sha256=update_hash,
+                 training_examples=metadata['training_examples'])
             print(
                 f"[{client.client_id}] Round {expected_round}: sent update "
                 f"{update_hash[:12]} (loss={mean_loss:.6f})",
@@ -112,6 +128,7 @@ def main() -> int:
         consumer.close()
 
     print(f"[{client.client_id}] Completed all {config.rounds} rounds", flush=True)
+    emit('worker_completed', rounds=config.rounds)
     return 0
 
 

@@ -246,7 +246,7 @@ Use small controlled datasets and representative multi-chunk model payloads, wit
 
 The old VM/setup/streaming instructions were under `distributed_federation/`, not `docs/`. They describe command-driven federation and repeat machine-specific commands.
 
-Update migration notices and indexes to this full training-dashboard scope during documentation migration. Keep paths valid for existing links and retain research reproduction and technical troubleshooting references. Previous contents remain available at the inspected commit. This revision changes only the blueprint.
+The seven migration-only operational guides have been removed to avoid duplicate and outdated instructions. The documentation indexes now link directly to this blueprint and `streaming/README.md` for implemented backend behavior. Earlier substantive guides remain available in [Git history](https://github.com/siaa1308/Capstone/tree/1294588780ddef3512910accce3b0fc48ee655f4/distributed_federation); old branch-relative links to the deleted guides should use that historical location. Retain research reproduction and dataset documentation. The table below records where the former guides' topics belong in the new design.
 
 | Previous guide | Replacement coverage |
 |---|---|
