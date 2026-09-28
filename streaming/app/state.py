@@ -24,6 +24,7 @@ class StateStore:
                     actor TEXT NOT NULL, status TEXT NOT NULL,
                     config TEXT NOT NULL, started TEXT NOT NULL, ended TEXT,
                     UNIQUE(run_id, actor));
+                CREATE TABLE IF NOT EXISTS controls (run INTEGER PRIMARY KEY REFERENCES runs(id), action TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS events (
                     id INTEGER PRIMARY KEY, run INTEGER NOT NULL REFERENCES runs(id),
                     time TEXT NOT NULL, kind TEXT NOT NULL, round_id INTEGER,
@@ -60,10 +61,32 @@ class StateStore:
                        (run, now(), kind, round_id, encoded))
 
     def finish(self, run, status):
-        if status not in {'Completed', 'Failed', 'Interrupted'}:
+        if status not in {'Completed', 'Failed', 'Interrupted', 'Stopped', 'Cancelled'}:
             raise ValueError('Invalid terminal status')
         with self.connect() as db:
             db.execute('UPDATE runs SET status=?,ended=? WHERE id=?', (status, now(), run))
+
+    def request_control(self, run, action):
+        if action not in {'stop', 'cancel'}:
+            raise ValueError('action must be stop or cancel')
+        with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row = db.execute('SELECT status FROM runs WHERE id=?', (run,)).fetchone()
+            if row is None or row['status'] != 'Running':
+                raise ValueError('Run is not active')
+            previous = db.execute('SELECT action FROM controls WHERE run=?', (run,)).fetchone()
+            if previous and (previous['action'] == 'cancel' or previous['action'] == action):
+                return previous['action']
+            db.execute('INSERT INTO controls(run,action) VALUES(?,?) '
+                       'ON CONFLICT(run) DO UPDATE SET action=excluded.action', (run, action))
+            db.execute('INSERT INTO events(run,time,kind,details) VALUES(?,?,?,?)',
+                       (run, now(), 'control_requested', json.dumps({'action': action})))
+            return action
+
+    def control(self, run):
+        with self.connect() as db:
+            row = db.execute('SELECT action FROM controls WHERE run=?', (run,)).fetchone()
+            return row['action'] if row else None
 
     def runs(self):
         with self.connect() as db:

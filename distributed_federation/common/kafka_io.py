@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from distributed_federation.common.control import check_control
+
 from collections.abc import Iterable
 from typing import Any
 
@@ -56,6 +58,7 @@ def publish_payload(
         payload_hash = envelope["payload_sha256"]
         key = f"{envelope['run_id']}:{envelope['round_id']}:{envelope['sender_id']}:{index}"
         while True:
+            check_control()
             try:
                 producer.produce(topic, key=key.encode(), value=encoded, callback=delivered)
                 break

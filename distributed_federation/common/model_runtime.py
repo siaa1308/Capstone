@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from distributed_federation.common.control import check_control
+
 import hashlib
 import json
 import sys
@@ -139,6 +141,7 @@ def train_local(runtime: RuntimeData, config: FederationConfig, round_id: int, c
     for epoch in range(config.local_epochs):
         state = model.initial_state(static)
         for batch in batches(train, config.batch_size):
+            check_control()
             optimizer.zero_grad(set_to_none=True)
             logits, state = model.score_and_update(state, batch)
             loss = sampled_loss(logits, batch.labels, config.negative_ratio, 1.0, generator)

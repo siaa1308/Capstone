@@ -1,0 +1,2 @@
+# Only needed for real Kafka transfers; dashboard itself uses the standard library.
+confluent-kafka==2.12.*

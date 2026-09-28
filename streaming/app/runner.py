@@ -5,6 +5,7 @@ from pathlib import Path
 
 from distributed_federation.common.config import load_config
 from distributed_federation.common.events import event_sink
+from distributed_federation.common.control import control_source, check_control, RunCancelled, RunStopped
 from .locking import RuntimeLock
 from .state import StateStore
 
@@ -22,8 +23,9 @@ def execute(config_path, role, state_dir, client_id=None):
         # A previously used identity cannot silently replay or overwrite a run.
         run = store.begin(config.run_id, actor, json.loads(Path(config_path).read_text(encoding='utf-8')))
         try:
-            with event_sink(lambda kind, round_id=None, **data: store.emit(run, kind, round_id, **data)):
+            with control_source(lambda: store.control(run)), event_sink(lambda kind, round_id=None, **data: store.emit(run, kind, round_id, **data)):
                 store.emit(run, 'process_started', role=role, client_id=client_id)
+                check_control(round_boundary=True)
                 if role == 'central':
                     from distributed_federation.central.aggregator import run as train
                     result = train(config)
@@ -32,6 +34,11 @@ def execute(config_path, role, state_dir, client_id=None):
                     result = train(config, client_id)
             store.finish(run, 'Completed' if result == 0 else 'Failed')
             return result
+        except (RunCancelled, RunStopped) as exc:
+            status = 'Cancelled' if isinstance(exc, RunCancelled) else 'Stopped'
+            store.emit(run, 'process_' + status.lower())
+            store.finish(run, status)
+            return 0
         except BaseException as exc:
             # Persist error type only: arbitrary exception messages may contain credentials.
             store.emit(run, 'process_failed', error_type=type(exc).__name__)

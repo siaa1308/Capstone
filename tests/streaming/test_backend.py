@@ -126,6 +126,58 @@ class BackendTests(unittest.TestCase):
             self.assertEqual(controller.status()[0]['status'], 'Running')
         self.assertEqual(controller.status()[0]['status'], 'Interrupted')
 
+    def test_control_requests_are_durable_idempotent_and_cancel_wins(self):
+        store = StateStore(self.root / 'state.db')
+        run = store.begin('test', 'central', {})
+        store.request_control(run, 'stop')
+        store.request_control(run, 'stop')
+        self.assertEqual(StateStore(store.path).control(run), 'stop')
+        store.request_control(run, 'cancel')
+        self.assertEqual(store.request_control(run, 'stop'), 'cancel')
+        self.assertEqual(len(store.events(run)), 2)
+        store.finish(run, 'Cancelled')
+        with self.assertRaises(ValueError):
+            store.request_control(run, 'cancel')
+        with self.assertRaises(ValueError):
+            store.request_control(999, 'stop')
+
+    def test_runner_acknowledges_controls_and_releases_lock(self):
+        from distributed_federation.common.control import check_control
+        for action, expected in [('stop', 'Stopped'), ('cancel', 'Cancelled')]:
+            with self.subTest(action=action):
+                state = self.root / action
+                def train(config):
+                    store = StateStore(state / 'state.sqlite3')
+                    store.request_control(1, action)
+                    if action == 'stop':
+                        check_control()  # Finish in-flight round first.
+                        emit('round_completed', 1)
+                    check_control(round_boundary=True)
+                    self.fail('control was ignored')
+                with patch('distributed_federation.central.aggregator.run', side_effect=train):
+                    self.assertEqual(execute(self.config(), 'central', state), 0)
+                store = StateStore(state / 'state.sqlite3')
+                self.assertEqual(store.runs()[0]['status'], expected)
+                self.assertEqual(store.events(1)[-1]['kind'], 'process_' + expected.lower())
+                with RuntimeLock(state / 'runtime.lock'):
+                    pass
+                check_control(round_boundary=True)  # Context must not leak.
+
+    def test_cancel_breaks_publish_backpressure(self):
+        from distributed_federation.common.control import control_source, RunCancelled
+        from distributed_federation.common.kafka_io import publish_payload
+        from unittest.mock import Mock
+        producer = Mock()
+        producer.produce.side_effect = BufferError()
+        actions = iter([None, 'cancel'])
+        with control_source(lambda: next(actions)), patch(
+                'distributed_federation.common.kafka_io.create_chunks',
+                return_value=[b'{"payload_sha256":"hash","run_id":"r","round_id":1,"sender_id":"central"}']):
+            with self.assertRaises(RunCancelled):
+                publish_payload(producer, 'topic', b'weights', {}, 'secret', 8)
+        producer.poll.assert_called_once_with(0.25)
+        producer.flush.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

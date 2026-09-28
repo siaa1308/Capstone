@@ -48,6 +48,10 @@ class RunController:
         return subprocess.Popen(command, cwd=REPO_ROOT, stdin=subprocess.DEVNULL,
                                 creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
 
+    def stop(self, run, cancel=False):
+        self.status()
+        return self.store.request_control(run, 'cancel' if cancel else 'stop')
+
     def status(self):
         try:
             with RuntimeLock(self.state_dir / 'runtime.lock'):
@@ -66,6 +70,9 @@ def main():
     start.add_argument('--role', choices=['central', 'bank'], required=True)
     start.add_argument('--client-id')
     commands.add_parser('status')
+    for action in ('stop', 'cancel'):
+        control = commands.add_parser(action)
+        control.add_argument('--run', type=int, required=True)
     events = commands.add_parser('events')
     events.add_argument('--run', type=int, required=True, help='Local integer run record ID')
     events.add_argument('--after', type=int, default=0)
@@ -73,6 +80,9 @@ def main():
     controller = RunController(args.state_dir)
     if args.command == 'start':
         return controller.start(args.config, args.role, args.client_id).wait()
+    if args.command in {'stop', 'cancel'}:
+        print(json.dumps({'requested': controller.stop(args.run, args.command == 'cancel')}))
+        return 0
     result = (controller.status() if args.command == 'status' else
               controller.store.events(args.run, args.after))
     print(json.dumps(result, indent=2))

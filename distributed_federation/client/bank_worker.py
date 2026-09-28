@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from distributed_federation.common.control import check_control
+
 import argparse
 import os
 import sys
@@ -62,9 +64,11 @@ def run(config, client_id) -> int:
 
     try:
         for expected_round in range(1, config.rounds + 1):
+            check_control(round_boundary=True)
             emit('waiting_for_model', expected_round)
             deadline = time.monotonic() + config.round_timeout_seconds
             while True:
+                check_control()
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     raise TimeoutError(f"Timed out waiting for global model round {expected_round}")
@@ -101,6 +105,7 @@ def run(config, client_id) -> int:
             emit('training', expected_round)
             mean_loss = train_local(runtime, config, expected_round, client_index)
             emit('training_completed', expected_round, mean_train_loss=mean_loss)
+            check_control()
             update_payload = serialize_state(runtime.model.state_dict())
             metadata = {
                 "message_type": "client_update",

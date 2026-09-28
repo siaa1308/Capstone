@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from distributed_federation.common.control import check_control
+
 import argparse
 import json
 import os
@@ -69,6 +71,7 @@ def run(config) -> int:
 
     try:
         for round_id in range(1, config.rounds + 1):
+            check_control(round_boundary=True)
             global_payload = serialize_state(global_state)
             base_hash = sha256_bytes(global_payload)
             emit('broadcasting', round_id, base_model_sha256=base_hash, bytes=len(global_payload))
@@ -91,6 +94,7 @@ def run(config) -> int:
             received: dict[str, tuple[dict, int, dict]] = {}
             deadline = time.monotonic() + config.round_timeout_seconds
             while len(received) < len(config.clients):
+                check_control()
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     missing = sorted(set(client_secrets) - set(received))
@@ -143,6 +147,7 @@ def run(config) -> int:
                 except ValueError as exc:
                     print(f"[central] Rejected Kafka message: {exc}", file=sys.stderr, flush=True)
 
+            check_control()
             ordered = [received[client.client_id] for client in config.clients]
             emit('aggregating', round_id, training_examples={c.client_id: received[c.client_id][1] for c in config.clients})
             global_state = fedavg([item[0] for item in ordered], [item[1] for item in ordered])
@@ -167,6 +172,7 @@ def run(config) -> int:
                 ],
                 "schema": runtime.schema,
             }
+            check_control()
             emit('saving_checkpoint', round_id)
             weights_path, manifest_path = save_state_and_manifest(global_state, run_output, round_id, manifest)
             emit('round_completed', round_id, output_global_sha256=final_payload_hash,

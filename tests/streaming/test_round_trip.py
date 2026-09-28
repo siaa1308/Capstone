@@ -59,7 +59,13 @@ class Consumer:
 
 
 class RoundTripTests(unittest.TestCase):
+    def test_three_banks_stop_after_one_complete_round(self):
+        self.run_round_trip(stop=True)
+
     def test_three_banks_two_rounds_weighted_fedavg(self):
+        self.run_round_trip()
+
+    def run_round_trip(self, stop=False):
         with tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
             root = Path(directory)
             raw = json.loads((Path(__file__).resolve().parents[2] /
@@ -131,24 +137,73 @@ class RoundTripTests(unittest.TestCase):
             stack.enter_context(patch.object(aggregator, 'save_state_and_manifest', side_effect=save))
             stack.enter_context(patch.object(bank_worker, 'train_local', side_effect=train))
 
+            from distributed_federation.common.control import control_source, RunStopped
+
+            def worker(client_id):
+                with control_source(lambda: 'stop' if stop and bases[client_id] else None):
+                    try:
+                        return bank_worker.run(config, client_id)
+                    except RunStopped:
+                        return 0
+
             def central():
-                with event_sink(lambda kind, round_id=None, **data: events.append((kind, round_id, data))):
-                    return aggregator.run(config)
+                with control_source(lambda: 'stop' if stop and any(e[0] == 'update_validated' for e in events) else None), event_sink(lambda kind, round_id=None, **data: events.append((kind, round_id, data))):
+                    try:
+                        return aggregator.run(config)
+                    except RunStopped:
+                        return 0
 
             with ThreadPoolExecutor(max_workers=4) as pool:
-                futures = [pool.submit(bank_worker.run, config, c.client_id) for c in config.clients]
+                futures = [pool.submit(worker, c.client_id) for c in config.clients]
                 futures.append(pool.submit(central))
                 self.assertEqual([f.result(timeout=15) for f in futures], [0, 0, 0, 0])
             # Weighted increment = .1*1 + .3*3 + .6*5 = 4, not equal-weight 3.
             for values in bases.values():
-                self.assertEqual(values, [0.0, 4.0])
+                self.assertEqual(values, [0.0] if stop else [0.0, 4.0])
             output = config.output_dir / config.run_id
+            if stop:
+                verify_checkpoint(output, 1)
+                self.assertFalse((output / 'global_round_002.safetensors').exists())
+                self.assertEqual(sum(e[0] == 'round_completed' for e in events), 1)
+                return
             for round_id in (1, 2):
                 verify_checkpoint(output, round_id)
             result = json.loads((output / 'global_round_002.safetensors').read_bytes())
             self.assertEqual(result['weight'], 8.0)
             self.assertEqual(sum(e[0] == 'update_validated' for e in events), 6)
             self.assertEqual(sum(e[0] == 'round_completed' for e in events), 2)
+
+    def test_cancel_while_waiting_closes_consumer_without_aggregation(self):
+        from distributed_federation.common.control import control_source, RunCancelled
+        with tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
+            root = Path(directory)
+            raw = json.loads((Path(__file__).resolve().parents[2] /
+                              'distributed_federation/config.example.json').read_text())
+            raw.update(broker='local:9092', dataset_dir=str(root), output_dir=str(root / 'out'))
+            path = root / 'config.json'
+            path.write_text(json.dumps(raw))
+            config = load_config(path)
+            secrets = {'FCL_CENTRAL_SECRET': 'c' * 32}
+            secrets.update({secret_env_name(c.client_id): 'b' * 32 for c in config.clients})
+            stack.enter_context(patch.dict('os.environ', secrets))
+            stack.enter_context(patch.object(aggregator, 'prepare_runtime', return_value=
+                SimpleNamespace(model=Model(), schema_sha256='schema')))
+            for name in ('load_initial_checkpoint', 'make_producer', 'publish_payload'):
+                stack.enter_context(patch.object(aggregator, name))
+            consumer = stack.enter_context(patch.object(aggregator, 'make_consumer')).return_value
+            requested = []
+            def poll(timeout):
+                requested.append('cancel')
+                return None
+            consumer.poll.side_effect = poll
+            stack.enter_context(patch.object(aggregator, 'serialize_state', return_value=b'weights'))
+            average = stack.enter_context(patch.object(aggregator, 'fedavg'))
+            with control_source(lambda: requested[0] if requested else None):
+                with self.assertRaises(RunCancelled):
+                    aggregator.run(config)
+            consumer.close.assert_called_once()
+            average.assert_not_called()
+            self.assertFalse(config.output_dir.exists())
 
     def test_missing_bank_prevents_aggregation(self):
         # The round times out before any aggregate or checkpoint can be produced.
