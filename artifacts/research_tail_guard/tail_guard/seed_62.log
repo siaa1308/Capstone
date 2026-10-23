@@ -1,0 +1,6 @@
+INITIAL validation=0.650097
+round=01 macro=0.686662 best=0.686662 banks=JPMorgan_Chase:0.7314,Wells_Fargo:0.6015,Key_Bank:0.7271 seconds=18.4
+round=02 macro=0.686662 best=0.686662 banks=JPMorgan_Chase:0.7314,Wells_Fargo:0.6015,Key_Bank:0.7271 seconds=31.2
+round=03 macro=0.686662 best=0.686662 banks=JPMorgan_Chase:0.7314,Wells_Fargo:0.6015,Key_Bank:0.7271 seconds=46.1
+round=04 macro=0.686662 best=0.686662 banks=JPMorgan_Chase:0.7314,Wells_Fargo:0.6015,Key_Bank:0.7271 seconds=59.1
+COMPLETE validation=0.686662 seconds=59.1

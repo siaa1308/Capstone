@@ -1,0 +1,20 @@
+{
+  "status": "development design recorded before execution",
+  "target_reference": "0.8710 September macro average precision; historically inspected",
+  "selection_metric": "August macro average precision; never September",
+  "seeds": [42, 52, 62],
+  "rounds": 4,
+  "local_epochs": 3,
+  "initial_checkpoint": "artifacts/research_adaptive_fcl/warm_start/federated/context_harmonized/seed_{seed}/global_model.pt",
+  "variants": ["matched_context_harmonized_continuation", "causal_tail_guard"],
+  "tail_guard": {
+    "relative_tolerance": 0.05,
+    "steps": [1.0, 0.5, 0.25, 0.0],
+    "risk": "mean softplus(negative logit minus positive logit) over all positives and top 20*positive_count negatives per bank/calendar task",
+    "history": "full June-July training history; memory rebuilt for each candidate; no holdout risk",
+    "acceptance": "largest step satisfying every nonempty two-class bank/task constraint"
+  },
+  "promotion": "Require improvement over matched continuation across seeds; keep round zero eligible and retain failed candidates",
+  "novelty": "Unverified specific combination; federated line search, ranking losses, gradient correction and continual replay have prior art",
+  "test_policy": "No new September evaluation in this study. Untouched later data required for confirmatory improvement beyond 87.10%."
+}

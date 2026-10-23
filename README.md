@@ -29,6 +29,16 @@ Values are bank-macro means ± sample standard deviations across seeds 42, 52, a
 
 See [the completed results, ablations, and checkpoint paths](docs/ADAPTIVE_FCL_RESULTS.md) and [method definitions and prior work](docs/ADAPTIVE_FCL_RESEARCH.md). The new implementation is in the research simulator; it is not deployed through Kafka.
 
+## October exploratory extension
+
+A fixed equal-probability ensemble of the three existing adaptive models reaches
+**90.68% September macro PR-AUC**, versus the **87.10% mean across its individual
+members** (+3.58 percentage points). This is one three-member ensemble requiring
+three model passes, not a new single-model or multi-seed result. September remains
+exploratory. Ensembling is not claimed as novel. A separate experimental tail-risk
+aggregation guard did not beat its matched continuation control and is retained
+as a negative result. See [results and limitations](docs/ENSEMBLE_IMPROVEMENT_RESULTS.md).
+
 ## Cohort and temporal protocol
 
 New modeling uses exactly three clients:

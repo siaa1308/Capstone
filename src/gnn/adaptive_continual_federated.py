@@ -310,6 +310,9 @@ def parse_args():
     parser.add_argument("--mode", choices=("federated", "local"), default="federated")
     parser.add_argument("--replay", choices=("uniform", "risk_context"), default="uniform")
     parser.add_argument("--aggregation", choices=("fedavg", "temporal_harmonized"), default="fedavg")
+    parser.add_argument("--tail-guard", action="store_true",
+                        help="Experimental training-only bank/task tail-ranking aggregation guard")
+    parser.add_argument("--tail-guard-tolerance", type=float, default=0.05)
     parser.add_argument("--distill", type=float, default=0.0)
     parser.add_argument("--harmonization-strength", type=float, default=0.5)
     parser.add_argument("--rounds", type=int, default=16)
@@ -324,6 +327,10 @@ def parse_args():
     parser.add_argument("--initial-checkpoint", type=Path,
                         help="Optional trusted existing global checkpoint; never loaded from Kafka")
     cfg = parser.parse_args()
+    if not np.isfinite(cfg.tail_guard_tolerance) or cfg.tail_guard_tolerance < 0:
+        parser.error("tail-guard-tolerance must be finite and nonnegative")
+    if cfg.tail_guard and cfg.mode != "federated":
+        parser.error("tail-guard requires federated mode")
     if min(cfg.rounds, cfg.local_epochs, cfg.hidden_channels, cfg.batch_size, cfg.threads) < 1:
         parser.error("Counts must be positive")
     if cfg.replay_size < 0 or cfg.distill < 0 or cfg.learning_rate <= 0 or not 0 <= cfg.harmonization_strength <= 1:
@@ -362,6 +369,11 @@ def main():
         metadata["initial_checkpoint_sha256"] = hashlib.sha256(cfg.initial_checkpoint.read_bytes()).hexdigest()
     json_write(cfg.output_dir / "manifest.json", metadata)
     (cfg.output_dir / "source_snapshot.py").write_bytes(Path(__file__).read_bytes())
+    if cfg.tail_guard:
+        guard_source = Path(__file__).with_name("causal_tail_guard.py")
+        (cfg.output_dir / guard_source.name).write_bytes(guard_source.read_bytes())
+        metadata["tail_guard_sha256"] = hashlib.sha256(guard_source.read_bytes()).hexdigest()
+        json_write(cfg.output_dir / "manifest.json", metadata)
     best_score, best_round, history, best_rows = -1.0, 0, [], []
     if cfg.mode == "local":
         rows = []
@@ -398,6 +410,11 @@ def main():
             else:
                 state = {key: torch.stack([item[key] for item in states]).mean(0) for key in old}
                 aggregation_diagnostics = {}
+            if cfg.tail_guard:
+                from causal_tail_guard import guarded_aggregation
+                state, guard_diagnostics = guarded_aggregation(
+                    global_model, clients, old, state, cfg.batch_size, cfg.tail_guard_tolerance)
+                aggregation_diagnostics["tail_guard"] = guard_diagnostics
             global_model.load_state_dict(state)
             rows = [{"bank": bank, **validation(global_model, static, streams, cfg.batch_size)}
                     for bank, (static, streams, _) in clients.items()]
