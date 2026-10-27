@@ -29,6 +29,25 @@ from src.transaction_story import build_transaction_story, canonical_frames, com
 SCHEMA = "adaptive-federated-single-model-group-shap-v2"
 
 
+def cached_explanation_matches(report, cache_key, checkpoint_hash):
+    """Return whether a cached explanation is safe to serve for this model and score."""
+    if not isinstance(report, dict):
+        return False
+    feature = report.get("feature_explanation")
+    prediction = report.get("prediction")
+    verification = report.get("verification")
+    model = report.get("model")
+    if not all(isinstance(value, dict) for value in (feature, prediction, verification, model)):
+        return False
+    target, score = feature.get("target_probability"), prediction.get("probability")
+    return (report.get("cache_key") == cache_key
+            and verification.get("passed") is True
+            and model.get("checkpoint_sha256") == checkpoint_hash
+            and isinstance(target, (int, float)) and np.isfinite(target)
+            and isinstance(score, (int, float)) and np.isfinite(score)
+            and abs(target - score) <= 1e-6)
+
+
 def json_default(value):
     if hasattr(value, "item"):
         return value.item()
@@ -214,8 +233,7 @@ class AdaptiveFederatedDashboard:
         with self.lock:
             if path.is_file():
                 report = json.loads(path.read_text(encoding="utf-8"))
-                if (report.get("cache_key") == key and report.get("verification", {}).get("passed") is True
-                        and report.get("model", {}).get("checkpoint_sha256") == self.checkpoint_hash):
+                if cached_explanation_matches(report, key, self.checkpoint_hash):
                     return self._attach_story(bank, transaction_id, report)
             adapter = self.adapters[bank]
             index = int(adapter.index("validation", transaction_id))

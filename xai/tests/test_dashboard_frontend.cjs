@@ -21,7 +21,7 @@ function harness(fetch) {
     URLSearchParams, location: {search: ''}, history: {replaceState() {}}, fetch,
     setTimeout, clearTimeout});
   const source = fs.readFileSync(path.join(root, 'static/dashboard.js'), 'utf8').replace(/\ninit\(\);\s*$/, '\n');
-  vm.runInContext(source + '\nthis.api={render,validateExplanation,loadRows,loadExplanation,graphEdgeDetails,readableTechnicalDetails};', context);
+  vm.runInContext(source + '\nthis.api={render,validateExplanation,loadRows,loadExplanation,graphEdgeDetails,readableTechnicalDetails,observedPatterns};', context);
   return {api: context.api, element};
 }
 
@@ -38,6 +38,8 @@ test('every cached bank/transaction renders feature directions from its own SHAP
       h.api.render(report);
       const html = h.element('#detail').innerHTML;
       assert.ok(html.includes(`<h2>Transaction ${report.transaction_id}</h2>`));
+      assert.ok(!html.includes('The main factor or its direction changed'));
+      assert.ok(!html.includes('Reference stability'));
       for (const feature of report.feature_explanation.features) {
         const direction = Math.abs(feature.shap_logit) < 1e-8 ? 'No clear measured effect'
           : feature.shap_logit > 0 ? 'Pushed the score higher' : 'Pushed the score lower';
@@ -164,10 +166,25 @@ test('plain-language technical details adapt to selected score, directions, hist
   const key=h.api.readableTechnicalDetails(fixture('Key_Bank','2974317'));
   assert.ok(key.includes('+2.7856'));
   assert.ok(key.includes('1 earlier transfer has a verified score test'));
-  assert.ok(key.includes('The leading factor changed.'));
+  assert.ok(!key.includes('The leading factor changed.'));
   const untested=h.api.readableTechnicalDetails(fixture('JPMorgan_Chase','2580817'));
   assert.ok(untested.includes('Earlier transfers are recorded, but no verified score-effect test is available'));
   const legitimate=h.api.readableTechnicalDetails(fixture('Wells_Fargo','2965480'));
   assert.ok(legitimate.includes('Why was this transaction not flagged?'));
   assert.ok(legitimate.includes('below'));
+});
+
+
+test('observed pattern labels count distinct peers and require a chronological cycle', () => {
+ const h=harness();
+ const event=(source,target,day,kind='earlier')=>({source,target,timestamp:`2025-07-${String(day).padStart(2,'0')}T00:00:00`,kind});
+ const selected=event('A','B',20,'selected');
+ const labels=earlier=>Array.from(h.api.observedPatterns({selected_transfer:selected,transfers:[...earlier,selected]}),p=>p.label);
+ assert.deepEqual(labels([]),[]);
+ assert.deepEqual(labels([event('A','B',1),event('A','B',2)]),[]);
+ assert.ok(labels([event('A','C',1),event('A','D',2)]).includes('Fan-out'));
+ assert.ok(labels([event('C','B',1),event('D','B',2)]).includes('Fan-in'));
+ assert.ok(labels([event('B','C',1),event('C','A',2)]).includes('Cycle'));
+ assert.ok(!labels([event('B','C',2),event('C','A',1)]).includes('Cycle'));
+ assert.ok(!labels([event('B','A',21)]).includes('Cycle'));
 });
